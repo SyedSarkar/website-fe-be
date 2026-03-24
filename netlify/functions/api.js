@@ -17,7 +17,7 @@ const app = express();
 app.use(cors({
   origin: process.env.NODE_ENV === 'development' 
     ? 'http://localhost:5173' 
-    : 'https://your-domain.netlify.app',
+    : 'https://partners-in-parenting.netlify.app',
   credentials: true
 }));
 
@@ -25,7 +25,7 @@ app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // Database connection
-mongoose.connect(process.env.MONGODB_URI, {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://kokimop513_db_user:M37gfkQFjt7F0jvz@clusterbank.97dhekw.mongodb.net', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
