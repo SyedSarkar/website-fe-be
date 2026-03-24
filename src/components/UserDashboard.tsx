@@ -6,12 +6,9 @@ import {
   BarChart3, 
   TrendingUp, 
   Clock, 
-  Award, 
   BookOpen, 
   Target,
-  Calendar,
-  User,
-  Activity
+  User
 } from 'lucide-react'
 
 interface ScaleResponse {

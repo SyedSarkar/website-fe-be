@@ -598,7 +598,7 @@ export default function AdminDashboard() {
                 </div>
                 <div className="p-6">
                   <div className="space-y-3">
-                    {stats.activityTrends.slice(-7).map((trend, index) => (
+                    {stats.activityTrends.slice(-7).map((trend) => (
                       <div key={trend.date} className="flex items-center justify-between">
                         <span className="text-sm text-gray-600">
                           {new Date(trend.date).toLocaleDateString('en-US', { weekday: 'short' })}
