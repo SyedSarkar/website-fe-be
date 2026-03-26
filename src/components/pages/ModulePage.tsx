@@ -38,9 +38,13 @@ export default function ModulePage({ content, moduleSlug }: ModulePageProps) {
             {block.type === 'image' && (
               <div className="my-6">
                 <img
-                  src={`/scraped_data/${moduleSlug.replace('m', 'module_').replace('-', '_')}/images/${block.src}`}
+                  src={`/scraped_data/${moduleSlug.replace('m', 'module_').replace(/-/g, '_')}/images/${block.src}`}
                   alt={block.alt || ''}
                   className="max-w-full h-auto rounded-lg shadow-md mx-auto"
+                  onError={(e) => {
+                    console.error('Image failed to load:', e.currentTarget.src);
+                    e.currentTarget.style.display = 'none';
+                  }}
                 />
               </div>
             )}

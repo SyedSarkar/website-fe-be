@@ -83,6 +83,7 @@ interface PerformanceData {
     email: string
     role: string
     createdAt: string
+    lastLogin?: string
   }
   performance: {
     totalScore: number
@@ -100,6 +101,19 @@ interface PerformanceData {
     riskLevel: string
   }
   scaleResponses: any[]
+  moduleEnrollments: Array<{
+    moduleSlug: string
+    moduleName: string
+    status: string
+    progress: {
+      percentage: number
+      completedPages: string[]
+      totalPages: number
+      currentPageSlug?: string
+      timeSpent: number
+    }
+    lastAccessed: string
+  }>
 }
 
 interface UserPerformanceData {
@@ -1205,6 +1219,14 @@ export default function AdminDashboard() {
                     <p className="font-medium">{performanceData.user?.role || 'N/A'}</p>
                   </div>
                   <div>
+                    <p className="text-sm text-gray-600">Last Login</p>
+                    <p className="font-medium">
+                      {performanceData.user?.lastLogin 
+                        ? new Date(performanceData.user.lastLogin).toLocaleString() 
+                        : 'Never'}
+                    </p>
+                  </div>
+                  <div>
                     <p className="text-sm text-gray-600">Risk Level</p>
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                       performanceData.performance?.riskLevel === 'Low Risk' 
@@ -1237,41 +1259,70 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {/* Recommendations */}
-              {performanceData.performance?.recommendations && performanceData.performance.recommendations.length > 0 && (
+              {/* All Modules Progress */}
+              {performanceData.moduleEnrollments && performanceData.moduleEnrollments.length > 0 ? (
                 <div className="mb-6">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Recommended Courses</h4>
-                  <div className="space-y-3">
-                    {performanceData.performance.recommendations.map((rec) => (
-                      <div key={rec.id} className="border border-gray-200 rounded-lg p-4">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4">All Modules Progress</h4>
+                  <div className="space-y-4">
+                    {performanceData.moduleEnrollments.map((enrollment: any) => (
+                      <div key={enrollment.moduleSlug} className="border border-gray-200 rounded-lg p-4">
                         <div className="flex justify-between items-start mb-2">
-                          <h5 className="font-medium text-gray-900">{rec.title}</h5>
+                          <h5 className="font-medium text-gray-900">{enrollment.moduleName}</h5>
                           <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            rec.priority === 'Low' 
+                            enrollment.status === 'completed' 
                               ? 'bg-green-100 text-green-800'
-                              : rec.priority === 'Medium'
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : 'bg-red-100 text-red-800'
-                          }`}>
-                            {rec.priority} Priority
-                          </span>
-                        </div>
-                        <p className="text-sm text-gray-600 mb-2">{rec.description}</p>
-                        <div className="flex justify-between items-center">
-                          <span className="text-xs text-gray-500">Duration: {rec.estimatedDuration}</span>
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            rec.status === 'Recommended' 
+                              : enrollment.status === 'in_progress'
                               ? 'bg-blue-100 text-blue-800'
-                              : rec.status === 'Optional'
-                              ? 'bg-gray-100 text-gray-800'
-                              : 'bg-orange-100 text-orange-800'
+                              : 'bg-gray-100 text-gray-800'
                           }`}>
-                            {rec.status}
+                            {enrollment.status?.replace('_', ' ') || 'Enrolled'}
                           </span>
                         </div>
+                        
+                        {/* Progress Bar */}
+                        <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
+                          <div 
+                            className="bg-teal-500 h-3 rounded-full transition-all duration-300"
+                            style={{ width: `${enrollment.progress?.percentage || 0}%` }}
+                          ></div>
+                        </div>
+                        
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-gray-600">
+                            {enrollment.progress?.percentage || 0}% complete
+                          </span>
+                          <span className="text-gray-500">
+                            {enrollment.progress?.completedPages?.length || 0} / {enrollment.progress?.totalPages || 0} pages
+                          </span>
+                        </div>
+                        
+                        {enrollment.progress?.currentPageSlug && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            Current page: {enrollment.progress.currentPageSlug}
+                          </p>
+                        )}
+                        
+                        {enrollment.progress?.timeSpent > 0 && (
+                          <p className="text-xs text-gray-500">
+                            Time spent: {enrollment.progress.timeSpent} minutes
+                          </p>
+                        )}
+                        
+                        <p className="text-xs text-gray-400 mt-2">
+                          Last accessed: {enrollment.lastAccessed 
+                            ? new Date(enrollment.lastAccessed).toLocaleString() 
+                            : 'Never'}
+                        </p>
                       </div>
                     ))}
                   </div>
+                </div>
+              ) : (
+                <div className="mb-6">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4">All Modules Progress</h4>
+                  <p className="text-gray-500 text-center py-8 bg-gray-50 rounded-lg">
+                    No module enrollments found. User hasn't started any modules yet.
+                  </p>
                 </div>
               )}
 

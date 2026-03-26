@@ -1,8 +1,7 @@
 import express from 'express';
+import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 import ScaleResponse from '../models/ScaleResponse.js';
-import Course from '../models/Course.js';
-import CourseProgress from '../models/CourseProgress.js';
 import ModuleEnrollment from '../models/ModuleEnrollment.js';
 import ModuleRecommendation from '../models/ModuleRecommendation.js';
 import { protect, authorize } from '../middleware/auth.js';
@@ -327,8 +326,7 @@ router.post('/users/:userId/reset-password', async (req, res) => {
       });
     }
 
-    // Hash new password
-    const bcrypt = require('bcryptjs');
+    // Hash new password using bcrypt
     const hashedPassword = await bcrypt.hash(newPassword, 12);
 
     // Update password
@@ -340,6 +338,7 @@ router.post('/users/:userId/reset-password', async (req, res) => {
       message: 'Password reset successfully'
     });
   } catch (error) {
+    console.error('Password reset error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to reset password'
@@ -371,8 +370,12 @@ router.get('/users/:userId/performance', async (req, res) => {
     const completionCount = scaleResponses.length;
     const lastCompletion = scaleResponses.length > 0 ? scaleResponses[0].completedAt : null;
 
-    // Course recommendations based on scores
-    const recommendations = generateCourseRecommendations(scaleResponses);
+    // Simple recommendations based on risk level
+    const recommendations = averageScore <= 15 
+      ? ['Connect module', 'Family Rules module'] 
+      : averageScore <= 25 
+        ? ['Parenting in Pandemic module', 'Conflict module'] 
+        : ['Anxiety module', 'Seeking Help module'];
 
     // Get module enrollments for this user
     const moduleEnrollments = await ModuleEnrollment.find({ user: req.params.userId })
@@ -387,7 +390,8 @@ router.get('/users/:userId/performance', async (req, res) => {
           name: user.name,
           email: user.email,
           role: user.role,
-          createdAt: user.createdAt
+          createdAt: user.createdAt,
+          lastLogin: user.lastLogin
         },
         performance: {
           totalScore,
@@ -402,6 +406,7 @@ router.get('/users/:userId/performance', async (req, res) => {
       }
     });
   } catch (error) {
+    console.error('Performance fetch error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch user performance'
@@ -437,8 +442,12 @@ router.get('/performance', async (req, res) => {
       const completionCount = userScaleResponses.length;
       const lastCompletion = userScaleResponses.length > 0 ? userScaleResponses[0].completedAt : null;
 
-      // Course recommendations based on scores
-      const recommendations = generateCourseRecommendations(userScaleResponses);
+      // Simple recommendations based on risk level
+      const recommendations = averageScore <= 15 
+        ? ['Connect module', 'Family Rules module'] 
+        : averageScore <= 25 
+          ? ['Parenting in Pandemic module', 'Conflict module'] 
+          : ['Anxiety module', 'Seeking Help module'];
 
       const inProgressModules = userEnrollments.filter(e => e.status === 'in_progress');
       
@@ -488,116 +497,6 @@ function getRiskLevel(averageScore) {
   if (averageScore <= 15) return 'Low Risk';
   if (averageScore <= 25) return 'Moderate Risk';
   return 'High Risk';
-}
-
-// Helper function to generate course recommendations
-async function generateCourseRecommendations(scaleResponses) {
-  const recommendations = [];
-  const averageScore = scaleResponses.length > 0 
-    ? scaleResponses.reduce((sum, r) => sum + r.totalScore, 0) / scaleResponses.length 
-    : 0;
-
-  try {
-    // Find courses that match the user's score range
-    const courses = await Course.find({
-      targetScoreRange: {
-        $gte: Math.floor(averageScore - 5),
-        $lte: Math.ceil(averageScore + 5)
-      },
-      isActive: true
-    }).sort({ priority: 1, difficulty: 1 });
-
-    return courses.map((course, index) => ({
-      id: course._id,
-      title: course.title,
-      priority: course.priority,
-      description: course.description,
-      estimatedDuration: course.estimatedDuration,
-      status: getCourseStatus(scaleResponses, averageScore),
-      difficulty: course.difficulty,
-      category: course.category
-    }));
-  } catch (error) {
-    console.error('Error generating course recommendations:', error);
-    // Fallback to hardcoded recommendations if database fails
-    if (averageScore <= 15) {
-      recommendations.push(
-        'Basic Parenting Skills',
-        'Positive Discipline Techniques',
-        'Communication Building',
-        'Stress Management Basics'
-      );
-    } else if (averageScore <= 25) {
-      recommendations.push(
-        'Advanced Communication',
-        'Behavioral Management',
-        'Emotional Support Strategies',
-        'Conflict Resolution Skills'
-      );
-    } else {
-      recommendations.push(
-        'Professional Counseling Resources',
-        'Crisis Intervention Training',
-        'Specialized Support Services',
-        'Mental Health Professional Consultation'
-      );
-    }
-
-    return recommendations.map((course, index) => ({
-      id: index + 1,
-      title: course,
-      priority: averageScore <= 15 ? 'Low' : averageScore <= 25 ? 'Medium' : 'High',
-      description: getCourseDescription(course),
-      estimatedDuration: getCourseDuration(course),
-      status: getCourseStatus(scaleResponses, averageScore)
-    }));
-  }
-}
-
-// Helper function to get course description
-function getCourseDescription(course) {
-  const descriptions = {
-    'Basic Parenting Skills': 'Fundamental parenting techniques for everyday situations',
-    'Positive Discipline Techniques': 'Constructive discipline methods that promote good behavior',
-    'Communication Building': 'Improving parent-child communication and understanding',
-    'Stress Management Basics': 'Basic stress management and coping strategies',
-    'Advanced Communication': 'Enhanced communication strategies for challenging situations',
-    'Behavioral Management': 'Advanced techniques for managing difficult behaviors',
-    'Emotional Support Strategies': 'Supporting emotional development and regulation',
-    'Conflict Resolution Skills': 'Resolving conflicts constructively and peacefully',
-    'Professional Counseling Resources': 'Access to professional counseling and support services',
-    'Crisis Intervention Training': 'Training for handling crisis situations effectively',
-    'Specialized Support Services': 'Specialized services for specific parenting challenges',
-    'Mental Health Professional Consultation': 'Professional mental health support and guidance'
-  };
-  return descriptions[course] || 'Comprehensive parenting support course';
-}
-
-// Helper function to get course duration
-function getCourseDuration(course) {
-  const durations = {
-    'Basic Parenting Skills': '4 weeks',
-    'Positive Discipline Techniques': '6 weeks',
-    'Communication Building': '4 weeks',
-    'Stress Management Basics': '3 weeks',
-    'Advanced Communication': '8 weeks',
-    'Behavioral Management': '10 weeks',
-    'Emotional Support Strategies': '6 weeks',
-    'Conflict Resolution Skills': '5 weeks',
-    'Professional Counseling Resources': 'Ongoing',
-    'Crisis Intervention Training': '2 weeks',
-    'Specialized Support Services': 'Variable',
-    'Mental Health Professional Consultation': 'As needed'
-  };
-  return durations[course] || '6 weeks';
-}
-
-// Helper function to get course status
-function getCourseStatus(scaleResponses, averageScore) {
-  if (scaleResponses.length === 0) return 'Not Started';
-  if (averageScore <= 15) return 'Recommended';
-  if (averageScore <= 25) return 'Optional';
-  return 'Strongly Recommended';
 }
 
 // Get all users with pagination and filtering

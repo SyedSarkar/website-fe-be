@@ -8,7 +8,6 @@ const authRoutes = require('../../backend/routes/auth');
 const scaleRoutes = require('../../backend/routes/scales');
 const userRoutes = require('../../backend/routes/users');
 const adminRoutes = require('../../backend/routes/admin');
-const courseRoutes = require('../../backend/routes/courses');
 const moduleRoutes = require('../../backend/routes/modules');
 
 const app = express();
@@ -17,7 +16,7 @@ const app = express();
 app.use(cors({
   origin: process.env.NODE_ENV === 'development' 
     ? 'http://localhost:5173' 
-    : 'https://partners-in-parenting.netlify.app',
+    : 'https://your-subdomain.yourdomain.com',
   credentials: true
 }));
 
@@ -41,7 +40,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/scales', scaleRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/api/courses', courseRoutes);
 app.use('/api/modules', moduleRoutes);
 
 // Health check

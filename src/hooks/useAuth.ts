@@ -25,7 +25,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 // Configure axios defaults
 const API_BASE_URL = import.meta.env?.VITE_API_URL || 
   (import.meta.env.MODE === 'production' 
-    ? 'https://partners-in-parenting.netlify.app/api' 
+    ? 'https://your-subdomain.yourdomain.com/api' 
     : 'http://localhost:5000/api')
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {

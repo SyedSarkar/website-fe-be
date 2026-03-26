@@ -18,6 +18,7 @@ interface ModuleProgress {
   moduleSlug: string
   moduleName: string
   currentPage: number
+  currentPageSlug?: string
   totalPages: number
   completedPages: string[]
   lastAccessed: string
@@ -74,20 +75,23 @@ export default function ContentPage({ modules }: ContentPageProps) {
     // Track time spent on this page
     const pageStartTime = Date.now()
     const currentPageSlug = pageSlug!
+    const currentPageIndex = currentModule.pages.findIndex(p => p.slug === currentPageSlug)
+
+    // Always update current page position
+    moduleProgress.currentPage = currentPageIndex
+    moduleProgress.lastAccessed = new Date().toISOString()
 
     // Mark current page as completed if not already marked
     if (!moduleProgress.completedPages.includes(currentPageSlug)) {
       moduleProgress.completedPages.push(currentPageSlug)
-      moduleProgress.currentPage = currentModule.pages.findIndex(p => p.slug === currentPageSlug)
-      moduleProgress.lastAccessed = new Date().toISOString()
       moduleProgress.isCompleted = moduleProgress.completedPages.length === currentModule.pages.length
-      
-      // Save updated progress to localStorage
-      localStorage.setItem('moduleProgress', JSON.stringify(progress))
-
-      // Enroll user in module and sync progress with backend
-      enrollAndUpdateProgress(moduleProgress)
     }
+    
+    // Save updated progress to localStorage
+    localStorage.setItem('moduleProgress', JSON.stringify(progress))
+
+    // Always sync progress with backend (not just on first visit)
+    enrollAndUpdateProgress(moduleProgress)
 
     // Cleanup function to track time spent
     return () => {
@@ -157,6 +161,7 @@ export default function ContentPage({ modules }: ContentPageProps) {
         moduleSlug: progressData.moduleSlug,
         moduleName: progressData.moduleName,
         currentPage: progressData.currentPage,
+        currentPageSlug: pageSlug,
         totalPages: progressData.totalPages,
         completedPages: progressData.completedPages,
         timeSpent: progressData.timeSpent

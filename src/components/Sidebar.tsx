@@ -65,6 +65,8 @@ export default function Sidebar({ modules, onClose }: SidebarProps) {
   }
 
   useEffect(() => {
+    if (!user) return
+    
     // Load progress from backend (user-specific) instead of localStorage
     const fetchProgress = async () => {
       try {
@@ -77,19 +79,24 @@ export default function Sidebar({ modules, onClose }: SidebarProps) {
         
         if (response.ok) {
           const data = await response.json()
+          console.log('Sidebar progress data:', data)
           const progressData = data.data || []
           setModuleProgress(Array.isArray(progressData) ? progressData : [])
         } else {
+          console.log('Sidebar progress fetch failed:', response.status)
           setModuleProgress([])
         }
       } catch (error) {
-        console.log('Failed to fetch module progress, using empty data')
+        console.log('Failed to fetch module progress:', error)
         setModuleProgress([])
       }
     }
     
     fetchProgress()
-  }, [])
+    // Refresh progress every 30 seconds
+    const interval = setInterval(fetchProgress, 30000)
+    return () => clearInterval(interval)
+  }, [user, location.pathname])
 
   const getFilename = (pageSlug: string) => {
     // Simply return the slug with .txt extension

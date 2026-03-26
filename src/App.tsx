@@ -72,35 +72,39 @@ function AppContent() {
         />
       )}
 
-      {/* Sidebar */}
-      <div className={`
-        fixed lg:static inset-y-0 left-0 z-50
-        transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0
-        transition-transform duration-300 ease-in-out
-        w-72 bg-white shadow-lg lg:shadow-none
-      `}>
-        <Sidebar 
-          modules={modules} 
-          onClose={() => setSidebarOpen(false)}
-        />
-      </div>
+      {/* Sidebar - Only show when user is authenticated and not on auth pages */}
+      {user && (
+        <div className={`
+          fixed lg:static inset-y-0 left-0 z-50
+          transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0
+          transition-transform duration-300 ease-in-out
+          w-72 bg-white shadow-lg lg:shadow-none
+        `}>
+          <Sidebar 
+            modules={modules} 
+            onClose={() => setSidebarOpen(false)}
+          />
+        </div>
+      )}
 
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Mobile header */}
-        <header className="lg:hidden bg-white shadow-sm px-4 py-3 flex items-center justify-between">
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="p-2 rounded-md text-gray-600 hover:bg-gray-100"
-            title="Open menu"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-          <h1 className="text-lg font-semibold text-teal-700">Partners in Parenting</h1>
-          <div className="w-10" />
-        </header>
+        {/* Mobile header - Only show when user is logged in */}
+        {user && location.pathname !== '/login' && location.pathname !== '/register' && (
+          <header className="lg:hidden bg-white shadow-sm px-4 py-3 flex items-center justify-between">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="p-2 rounded-md text-gray-600 hover:bg-gray-100"
+              title="Open menu"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <span className="font-semibold text-gray-800">Partners in Parenting</span>
+            <div className="w-10" /> {/* Spacer for alignment */}
+          </header>
+        )}
 
         {/* Content area */}
         <main className="flex-1 overflow-auto">

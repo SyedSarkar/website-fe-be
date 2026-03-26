@@ -37,6 +37,10 @@ const moduleEnrollmentSchema = new mongoose.Schema({
       type: Number,
       default: 0
     },
+    currentPageSlug: {
+      type: String,
+      default: null
+    },
     totalPages: {
       type: Number,
       required: true

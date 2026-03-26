@@ -17,14 +17,13 @@ import authRoutes from './routes/auth.js';
 import scaleRoutes from './routes/scales.js';
 import userRoutes from './routes/users.js';
 import adminRoutes from './routes/admin.js';
-import courseRoutes from './routes/courses.js';
 import moduleRoutes from './routes/modules.js';
 
 const app = express();
 
 // Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: [process.env.FRONTEND_URL || 'http://localhost:5173', 'http://localhost:5174'],
   credentials: true
 }));
 
@@ -49,7 +48,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/scales', scaleRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/api/courses', courseRoutes);
 app.use('/api/modules', moduleRoutes);
 
 // Health check endpoint

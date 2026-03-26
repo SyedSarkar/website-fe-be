@@ -39,6 +39,7 @@ interface ModuleProgress {
   timeSpent: number
   lastAccessed: string
   status: string
+  currentPageSlug?: string
 }
 
 interface UserStats {
@@ -466,6 +467,9 @@ export default function UserDashboard() {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Last Accessed
                       </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Action
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -501,12 +505,20 @@ export default function UserDashboard() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {new Date(module.lastAccessed).toLocaleDateString()}
                         </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <Link
+                            to={`/module/${module.moduleSlug}/${module.currentPageSlug || '00-home'}`}
+                            className="px-3 py-1 bg-teal-600 text-white rounded hover:bg-teal-700 transition-colors"
+                          >
+                            {module.percentage === 100 ? 'Review' : 'Continue'}
+                          </Link>
+                        </td>
                       </tr>
                     ))}
                     {moduleProgress.length === 0 && (
                       <tr>
-                        <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
-                          No module enrollments found. Start with a scale to get recommended modules!
+                        <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                          No module enrollments found. Visit any module page to start learning!
                         </td>
                       </tr>
                     )}

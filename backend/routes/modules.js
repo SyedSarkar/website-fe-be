@@ -71,13 +71,14 @@ router.post('/enroll', async (req, res) => {
 // Update user's progress
 router.post('/progress', async (req, res) => {
   try {
-    const { moduleSlug, moduleName, currentPage, totalPages, completedPages, timeSpent } = req.body;
+    const { moduleSlug, moduleName, currentPage, currentPageSlug, totalPages, completedPages, timeSpent } = req.body;
     const userId = req.user._id;
     
     console.log('📈 Progress update request:', { 
       moduleSlug, 
       moduleName, 
-      currentPage, 
+      currentPage,
+      currentPageSlug,
       totalPages, 
       completedPages: completedPages?.length || 0, 
       userId 
@@ -99,6 +100,7 @@ router.post('/progress', async (req, res) => {
         status: 'in_progress',
         progress: {
           currentPage: currentPage || 0,
+          currentPageSlug: currentPageSlug || null,
           totalPages,
           completedPages: completedPages || [],
           percentage: Math.round(((completedPages || []).length / totalPages) * 100),
@@ -283,7 +285,8 @@ router.get('/my-progress', async (req, res) => {
         percentage: enrollment.progress.percentage,
         timeSpent: enrollment.progress.timeSpent,
         lastAccessed: enrollment.lastAccessed,
-        status: enrollment.status
+        status: enrollment.status,
+        currentPageSlug: enrollment.progress.currentPageSlug || null
       }))
     });
   } catch (error) {
