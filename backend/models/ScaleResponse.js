@@ -9,7 +9,7 @@ const scaleResponseSchema = new mongoose.Schema({
   scaleId: {
     type: String,
     required: [true, 'Scale ID is required'],
-    enum: ['child-mental-health', 'parenting-stress', 'anxiety-assessment']
+    enum: ['child-mental-health', 'parental-self-efficacy', 'parent-child-relationship', 'parental-mental-wellbeing']
   },
   scaleName: {
     type: String,

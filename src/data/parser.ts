@@ -1,16 +1,16 @@
 import type { Module, PageContent, ContentBlock } from '../types'
 
 const modulesConfig = [
-  { id: 'module_1_connect', slug: 'm1-connect', name: 'Connect' },
-  { id: 'module_2_parenting_in_pandemic', slug: 'm2-parenting-in-pandemic', name: 'Parenting in Pandemic' },
-  { id: 'module_3_family_rules', slug: 'm3-family-rules', name: 'Family Rules' },
-  { id: 'module_4_nurture', slug: 'm4-nurture', name: 'Nurture' },
-  { id: 'module_5_conflict', slug: 'm5-conflict', name: 'Conflict' },
-  { id: 'module_6_friends', slug: 'm6-friends', name: 'Friends' },
-  { id: 'module_7_health_habits', slug: 'm7-health-habits', name: 'Health Habits' },
-  { id: 'module_8_problems', slug: 'm8-problems', name: 'Problems' },
-  { id: 'module_9_anxiety', slug: 'm9-anxiety', name: 'Anxiety' },
-  { id: 'module_10_seeking_help', slug: 'm10-seeking-help', name: 'Seeking Help' },
+  { id: 'module_1_connect', slug: 'm1-connect', name: 'Connect', pages: 23 },
+  { id: 'module_2_parenting_in_pandemic', slug: 'm2-parenting-in-pandemic', name: 'Parenting in Pandemic', pages: 22 },
+  { id: 'module_3_family_rules', slug: 'm3-family-rules', name: 'Family Rules', pages: 14 },
+  { id: 'module_4_nurture', slug: 'm4-nurture', name: 'Nurture', pages: 16 },
+  { id: 'module_5_conflict', slug: 'm5-conflict', name: 'Conflict', pages: 18 },
+  { id: 'module_6_friends', slug: 'm6-friends', name: 'Friends', pages: 12 },
+  { id: 'module_7_health_habits', slug: 'm7-health-habits', name: 'Health Habits', pages: 15 },
+  { id: 'module_8_problems', slug: 'm8-problems', name: 'Problems', pages: 17 },
+  { id: 'module_9_anxiety', slug: 'm9-anxiety', name: 'Anxiety', pages: 13 },
+  { id: 'module_10_seeking_help', slug: 'm10-seeking-help', name: 'Seeking Help', pages: 11 },
 ]
 
 // Better title mappings for specific patterns
@@ -45,7 +45,7 @@ export async function parseAllModules(): Promise<Module[]> {
   const modules: Module[] = []
   for (const config of modulesConfig) {
     try {
-      const pages = await loadModulePages(config.id, config.slug, config.name)
+      const pages = await loadModulePages(config.id, config.slug, config.name, config.pages)
       if (pages.length > 0) {
         modules.push({ slug: config.slug, name: config.name, pages })
       }
@@ -56,239 +56,72 @@ export async function parseAllModules(): Promise<Module[]> {
   return modules
 }
 
-async function loadModulePages(moduleId: string, moduleSlug: string, moduleName: string): Promise<PageContent[]> {
+async function loadModulePages(moduleId: string, moduleSlug: string, moduleName: string, expectedPages: number): Promise<PageContent[]> {
   const pages: PageContent[] = []
+  const pageCacheKey = `${moduleId}-${expectedPages}`
   
-  try {
-    // Get list of all .txt files in the module directory
-    const response = await fetch(`/scraped_data/${moduleId}/`)
-    if (!response.ok) {
-      console.warn(`Could not list files for module ${moduleId}`)
-      return pages
-    }
-    
-    // Since we can't directly list directory contents via fetch, 
-    // we'll try a more comprehensive approach with all possible page numbers
-    const maxPages = 50 // Increased max pages to catch more files
-    
-    for (let i = 0; i < maxPages; i++) {
-      const pageNum = i.toString().padStart(2, '0')
-      
-      // First try to get the page directly by number
-      let found = false
-      
-      // Try common page patterns for this number
-      const patterns = [
-        `${pageNum}-home`,
-        `${pageNum}-checking-in`,
-        `${pageNum}-good-relationship`,
-        `${pageNum}-ups-and-downs`,
-        `${pageNum}-pandemic-emotions`,
-        `${pageNum}-three-strategies`,
-        `${pageNum}-show-affection`,
-        `${pageNum}-things-you-can-do`,
-        `${pageNum}-things-you-can-say`,
-        `${pageNum}-be-genuine`,
-        `${pageNum}-take-time-to-talk`,
-        `${pageNum}-conversation`,
-        `${pageNum}-talking-to-brickwall`,
-        `${pageNum}-talking-tough-stuff`,
-        `${pageNum}-identify-validate-understand`,
-        `${pageNum}-things-to-avoid`,
-        `${pageNum}-your-response-matters`,
-        `${pageNum}-video-activity`,
-        `${pageNum}-pandemic-support`,
-        `${pageNum}-pandemic-bounceback`,
-        `${pageNum}-goals`,
-        `${pageNum}-quiz`,
-        `${pageNum}-dont-blame-yourself`,
-        `${pageNum}-care-for-yourself`,
-        `${pageNum}-self-care`,
-        `${pageNum}-ask-support`,
-        `${pageNum}-discuss`,
-        `${pageNum}-find-info`,
-        `${pageNum}-have-conversation`,
-        `${pageNum}-address-misconceptions`,
-        `${pageNum}-follow-restrictions`,
-        `${pageNum}-new-normal`,
-        `${pageNum}-coping-worries`,
-        `${pageNum}-easing-restrictions`,
-        `${pageNum}-connection`,
-        `${pageNum}-routines`,
-        `${pageNum}-silver-linings`,
-        `${pageNum}-expectations`,
-        `${pageNum}-optional-topics`,
-        `${pageNum}-work-from-home`,
-        `${pageNum}-online-learning`,
-        `${pageNum}-support-online-learning`,
-        `${pageNum}-facetoface-school`,
-        `${pageNum}-loved-one`,
-        `${pageNum}-loved-one-covid`,
-        `${pageNum}-loved-one-death`,
-        `${pageNum}-signs-grief`,
-        `${pageNum}-support-grief`,
-        `${pageNum}-family-violence`,
-        `${pageNum}-risk-family-violence`,
-        `${pageNum}-seek-help`,
-        `${pageNum}-why-family-rules`,
-        `${pageNum}-what-rules`,
-        `${pageNum}-who-makes-rules`,
-        `${pageNum}-how-to-rules`,
-        `${pageNum}-apply-rules`,
-        `${pageNum}-review-rules`,
-        `${pageNum}-rules-as-foundations`,
-        `${pageNum}-reward-good-behaviour`,
-        `${pageNum}-reflect-on-rules`,
-        `${pageNum}-balancing-act`,
-        `${pageNum}-how-to-stay-connected`,
-        `${pageNum}-know-your-teen`,
-        `${pageNum}-ways-to-connect`,
-        `${pageNum}-the-together-list`,
-        `${pageNum}-encourage-independence`,
-        `${pageNum}-responsibilities`,
-        `${pageNum}-other-activities`,
-        `${pageNum}-am-i-over-involved`,
-        `${pageNum}-manage-disagreements`,
-        `${pageNum}-conflict-partner`,
-        `${pageNum}-establish-ground-rules`,
-        `${pageNum}-ground-rules`,
-        `${pageNum}-ground-rules-cont`,
-        `${pageNum}-remain-calm`,
-        `${pageNum}-siblings`,
-        `${pageNum}-assertive-communication`,
-        `${pageNum}-communication-styles`,
-        `${pageNum}-communication-styles-cont`,
-        `${pageNum}-carry-on-loving-them`,
-        `${pageNum}-friendships`,
-        `${pageNum}-social-situations`,
-        `${pageNum}-you-and-their-friends`,
-        `${pageNum}-friends-range-of-ages`,
-        `${pageNum}-good-social-skills`,
-        `${pageNum}-friendship-troubles`,
-        `${pageNum}-navigate-problems`,
-        `${pageNum}-encourage-healthy-habits`,
-        `${pageNum}-healthy-diet`,
-        `${pageNum}-how-to-healthy-diet`,
-        `${pageNum}-daily-exercise`,
-        `${pageNum}-build-into-life`,
-        `${pageNum}-screentime`,
-        `${pageNum}-screentime-quiz`,
-        `${pageNum}-healthy-screen-use`,
-        `${pageNum}-sleep-habits`,
-        `${pageNum}-what-if-sleep-problems`,
-        `${pageNum}-no-alcohol-drugs`,
-        `${pageNum}-what-if-alchohol-drugs`,
-        `${pageNum}-deal-with-problems`,
-        `${pageNum}-problem-solving`,
-        `${pageNum}-brainstorm-solutions`,
-        `${pageNum}-evaluate-solutions`,
-        `${pageNum}-decide-solution`,
-        `${pageNum}-evaluate-outcome`,
-        `${pageNum}-stress-management`,
-        `${pageNum}-signs-of-stress`,
-        `${pageNum}-pressures-expectations`,
-        `${pageNum}-anxiety`,
-        `${pageNum}-parental-accommodation`,
-        `${pageNum}-reflection`,
-        `${pageNum}-support`,
-        `${pageNum}-facing-fears`,
-        `${pageNum}-other-tips`,
-        `${pageNum}-manage-own-anxiety`,
-        `${pageNum}-mental-health`,
-        `${pageNum}-risk-factors`,
-        `${pageNum}-depression-signs`,
-        `${pageNum}-anxiety-signs`,
-        `${pageNum}-what-is-normal`,
-        `${pageNum}-what-should-i-do`,
-        `${pageNum}-teen-seek-help`,
-        `${pageNum}-where-is-help`,
-        `${pageNum}-previous-depression`,
-      ]
-      
-      for (const pattern of patterns) {
-        const slug = pattern
-        try {
-          const response = await fetch(`/scraped_data/${moduleId}/${slug}.txt`)
-          if (response.ok) {
-            const text = await response.text()
-            
-            // Skip if content is empty, too short, or is HTML (404 fallback)
-            if (!text || text.trim().length < 10 || text.trim().startsWith('<!DOCTYPE') || text.trim().startsWith('<html')) {
-              continue
-            }
-            
-            const content = parseContent(text)
-            
-            // Skip if no content parsed
-            if (content.length === 0) {
-              continue
-            }
-            
-            let title = extractTitle(content)
-            
-            // Check if we have a predefined title for this pattern
-            const patternKey = pattern.replace(/^\d+-/, '') // Remove number prefix
-            if (titleMappings[patternKey]) {
-              title = titleMappings[patternKey]
-            } else if (!title || title === 'Connect' || title.length < 3) {
-              // Generate a more readable fallback title from the pattern if H1 is not descriptive
-              const patternParts = pattern.split('-')
-              const pageName = patternParts.slice(1).join('-')
-              const fallbackTitle = pageName.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
-              
-              // Use fallback if the extracted title is too generic or non-existent
-              if (!title || title === 'Connect' || title.length < 3) {
-                title = fallbackTitle
-              }
-            }
-            
-            pages.push({ slug, title, moduleSlug, moduleName, content })
-            found = true
-            break
-          }
-        } catch {
-          // Continue to next pattern
-        }
-      }
-      
-      // If no pattern found for this number, stop trying higher numbers
-      if (!found && i > 10) {
-        // Check if we've reached the end by trying a few more numbers
-        let consecutiveFailures = 0
-        for (let j = i; j < Math.min(i + 5, maxPages); j++) {
-          let anyFound = false
-          
-          for (const pattern of patterns) {
-            const slug = pattern
-            try {
-              const checkResponse = await fetch(`/scraped_data/${moduleId}/${slug}.txt`)
-              if (checkResponse.ok) {
-                anyFound = true
-                break
-              }
-            } catch {
-              // Continue
-            }
-          }
-          
-          if (!anyFound) {
-            consecutiveFailures++
-          } else {
-            consecutiveFailures = 0
-          }
-          
-          if (consecutiveFailures >= 3) {
-            return pages // End of pages reached
-          }
-        }
-      }
-    }
-  } catch (error) {
-    console.warn(`Error loading module ${moduleId}:`, error)
+  // Check cache first
+  if (pageCache.has(pageCacheKey)) {
+    return pageCache.get(pageCacheKey)!
   }
   
-  return pages.sort((a, b) => a.slug.localeCompare(b.slug))
+  // Known page slugs for each module to avoid 2000+ HTTP requests
+  const knownPagePatterns: Record<string, string[]> = {
+    'module_1_connect': ['00-home', '01-checking-in', '02-good-relationship', '03-ups-and-downs', '04-pandemic-emotions', '05-three-strategies', '06-show-affection', '07-things-you-can-do', '08-things-you-can-say', '09-be-genuine', '10-take-time-to-talk', '11-conversation', '12-talking-to-brickwall', '13-talking-tough-stuff', '14-identify-validate-understand', '15-things-to-avoid', '16-your-response-matters', '17-video-activity', '18-pandemic-support', '19-pandemic-bounceback', '20-goals', '21-quiz', '22-dont-blame-yourself'],
+    'module_2_parenting_in_pandemic': ['00-home', '01-checking-in', '02-covid-changes', '03-your-experience', '04-teen-experience', '05-recognising-emotions', '06-mindfulness', '07-mindfulness-activity', '08-spot-emotions', '09-allow-emotions', '10-allow-emotions-activity', '11-everyone-struggles', '12-strategies-covid', '13-connection', '14-routines', '15-silver-linings', '16-expectations', '17-optional-topics', '18-work-from-home', '19-online-learning', '20-support-online-learning', '21-facetoface-school', '22-loved-one', '23-loved-one-covid', '24-loved-one-death', '25-signs-grief', '26-support-grief', '27-family-violence', '28-risk-family-violence', '29-seek-help'],
+    'module_3_family_rules': ['00-home', '01-checking-in', '02-why-family-rules', '03-what-rules', '04-who-makes-rules', '05-how-to-rules', '06-apply-rules', '07-review-rules', '08-rules-as-foundations', '09-reward-good-behaviour', '10-reflect-on-rules', '11-goals', '12-quiz', '13-dont-blame-yourself'],
+    'module_4_nurture': ['00-home', '01-checking-in', '02-why-nurture', '03-what-is-nurture', '04-nurture-example', '05-warmth-responsiveness', '06-ways-to-respond', '07-sensitivity', '08-sensitivity-example', '09-acceptance', '10-acceptance-example', '11-praise', '12-praise-example', '13-rewards', '14-rewards-example', '15-goals', '16-quiz', '17-dont-blame-yourself'],
+    'module_5_conflict': ['00-home', '01-checking-in', '02-why-conflict', '03-what-conflict', '04-conflict-example', '05-conflict-styles', '06-understand-teen', '07-ways-to-respond', '08-emotions', '09-plan-ahead', '10-plan-example', '11-in-the-moment', '12-in-moment-example', '13-goals', '14-quiz', '15-dont-blame-yourself'],
+    'module_6_friends': ['00-home', '01-checking-in', '02-why-friends', '03-peer-importance', '04-friendship-skills', '05-social-challenges', '06-supporting-socially', '07-goals', '08-quiz', '09-dont-blame-yourself'],
+    'module_7_health_habits': ['00-home', '01-checking-in', '02-why-health-habits', '03-healthy-habits', '04-sleep-nutrition', '05-physical-activity', '06-mental-wellbeing', '07-goals', '08-quiz', '09-dont-blame-yourself'],
+    'module_8_problems': ['00-home', '01-checking-in', '02-why-problems', '03-problem-solving', '04-step-by-step', '05-practical-problems', '06-when-to-seek-help', '07-goals', '08-quiz', '09-dont-blame-yourself'],
+    'module_9_anxiety': ['00-home', '01-checking-in', '02-why-anxiety', '03-understanding-anxiety', '04-anxiety-signs', '05-coping-strategies', '06-supporting-anxious', '07-when-professional', '08-goals', '09-quiz', '10-dont-blame-yourself'],
+    'module_10_seeking_help': ['00-home', '01-checking-in', '02-why-seeking-help', '03-recognizing-needs', '04-help-options', '05-overcoming-barriers', '06-preparing-conversation', '07-goals', '08-quiz', '09-dont-blame-yourself'],
+  }
+  
+  const patterns = knownPagePatterns[moduleId] || []
+  
+  // Fetch all pages in parallel (limited to expectedPages)
+  const pagePromises = patterns.slice(0, expectedPages).map(async (pattern) => {
+    try {
+      const response = await fetch(`/scraped_data/${moduleId}/${pattern}.txt`)
+      if (!response.ok) return null
+      
+      const text = await response.text()
+      if (!text || text.trim().length < 10) return null
+      
+      const content = parseContent(text)
+      if (content.length === 0) return null
+      
+      let title = titleMappings[pattern]
+      if (!title) {
+        const extracted = extractTitle(content)
+        title = extracted || pattern.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+      }
+      
+      return { slug: pattern, title, moduleSlug, moduleName, content }
+    } catch {
+      return null
+    }
+  })
+  
+  const results = await Promise.all(pagePromises)
+  
+  // Filter out nulls and add to pages
+  for (const page of results) {
+    if (page) pages.push(page)
+  }
+  
+  // Sort by slug to maintain order
+  pages.sort((a, b) => a.slug.localeCompare(b.slug))
+  
+  // Cache the result
+  pageCache.set(pageCacheKey, pages)
+  return pages
 }
+
+// Page cache
+const pageCache = new Map<string, PageContent[]>()
 
 function parseContent(text: string): ContentBlock[] {
   const blocks: ContentBlock[] = []

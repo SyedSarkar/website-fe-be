@@ -92,18 +92,22 @@ router.post('/progress', async (req, res) => {
       });
     }
 
+    // Calculate percentage and determine status
+    const percentage = Math.round(((completedPages || []).length / totalPages) * 100);
+    const status = percentage >= 100 ? 'completed' : 'in_progress';
+
     // Find or create enrollment
     const enrollment = await ModuleEnrollment.findOneAndUpdate(
       { user: userId, moduleSlug },
       {
         moduleName,
-        status: 'in_progress',
+        status,
         progress: {
           currentPage: currentPage || 0,
           currentPageSlug: currentPageSlug || null,
           totalPages,
           completedPages: completedPages || [],
-          percentage: Math.round(((completedPages || []).length / totalPages) * 100),
+          percentage,
           timeSpent: timeSpent || 0
         },
         lastAccessed: new Date(),

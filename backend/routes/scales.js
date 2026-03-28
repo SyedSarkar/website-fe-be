@@ -164,4 +164,36 @@ router.get('/check/:scaleId', protect, async (req, res, next) => {
   }
 });
 
+// Delete scale response (for redoing assessment)
+router.delete('/response/:scaleId', async (req, res) => {
+  try {
+    const { scaleId } = req.params;
+    const userId = req.user._id;
+
+    // Find and delete the scale response
+    const result = await ScaleResponse.deleteOne({
+      user: userId,
+      scaleId: scaleId
+    });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Scale response not found'
+      });
+    }
+
+    res.json({
+      status: 'success',
+      message: 'Scale response deleted successfully'
+    });
+  } catch (error) {
+    console.error('❌ Error deleting scale response:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to delete scale response'
+    });
+  }
+});
+
 export default router;

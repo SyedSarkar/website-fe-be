@@ -1,16 +1,21 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './hooks/useAuth'
 import Sidebar from './components/Sidebar'
-import ContentPage from './components/ContentPage'
-import LandingPage from './components/LandingPage'
-import LoginPage from './components/auth/LoginPage'
-import RegisterPage from './components/auth/RegisterPage'
-import AdminDashboard from './components/admin/AdminDashboard'
-import UserDashboard from './components/UserDashboard'
-import ChildMentalHealthScale from './components/scales/ChildMentalHealthScale'
 import { Module } from './types'
 import { parseAllModules } from './data/parser'
+
+// Lazy load heavy components
+const ContentPage = lazy(() => import('./components/ContentPage'))
+const LoginPage = lazy(() => import('./components/auth/LoginPage'))
+const RegisterPage = lazy(() => import('./components/auth/RegisterPage'))
+const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard'))
+const UserDashboard = lazy(() => import('./components/UserDashboard'))
+const ScaleFlow = lazy(() => import('./components/ScaleFlow'))
+const Home = lazy(() => import('./components/pages/Home'))
+const Contact = lazy(() => import('./components/pages/Contact'))
+const Profile = lazy(() => import('./components/pages/Profile'))
+const Resources = lazy(() => import('./components/pages/Resources'))
 
 // Protected route component for non-admin users
 function ProtectedUserRoute({ children }: { children: React.ReactNode }) {
@@ -108,58 +113,78 @@ function AppContent() {
 
         {/* Content area */}
         <main className="flex-1 overflow-auto">
-          <Routes>
-            <Route 
-              path="/" 
-              element={
-                user ? <Navigate to="/dashboard" replace /> : <LandingPage />
-              } 
-            />
-            <Route 
-              path="/login" 
-              element={<LoginPage />} 
-            />
-            <Route 
-              path="/register" 
-              element={<RegisterPage />} 
-            />
-            <Route 
-              path="/admin" 
-              element={
-                <ProtectedAdminRoute>
-                  <AdminDashboard />
-                </ProtectedAdminRoute>
-              } 
-            />
-            <Route 
-              path="/dashboard" 
-              element={
-                <ProtectedUserRoute>
-                  <UserDashboard />
-                </ProtectedUserRoute>
-              } 
-            />
-            <Route 
-              path="/scale/:scaleId" 
-              element={
-                <ProtectedUserRoute>
-                  <ChildMentalHealthScale />
-                </ProtectedUserRoute>
-              } 
-            />
-            <Route 
-              path="/module/:moduleSlug/:pageSlug" 
-              element={
-                <ProtectedUserRoute>
-                  <ContentPage modules={modules} />
-                </ProtectedUserRoute>
-              } 
-            />
-            <Route 
-              path="*" 
-              element={<Navigate to="/" replace />} 
-            />
-          </Routes>
+          <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600"></div>
+            </div>
+          }>
+            <Routes>
+              <Route 
+                path="/" 
+                element={<Home />} 
+              />
+              <Route 
+                path="/contact" 
+                element={<Contact />} 
+              />
+              <Route 
+                path="/resources" 
+                element={<Resources />} 
+              />
+              <Route 
+                path="/login" 
+                element={<LoginPage />} 
+              />
+              <Route 
+                path="/register" 
+                element={<RegisterPage />} 
+              />
+              <Route 
+                path="/profile" 
+                element={
+                  <ProtectedUserRoute>
+                    <Profile />
+                  </ProtectedUserRoute>
+                } 
+              />
+              <Route 
+                path="/admin" 
+                element={
+                  <ProtectedAdminRoute>
+                    <AdminDashboard />
+                  </ProtectedAdminRoute>
+                } 
+              />
+              <Route 
+                path="/dashboard" 
+                element={
+                  <ProtectedUserRoute>
+                    <ScaleFlow />
+                  </ProtectedUserRoute>
+                } 
+              />
+              <Route 
+                path="/user-dashboard" 
+                element={
+                  <ProtectedUserRoute>
+                    <UserDashboard />
+                  </ProtectedUserRoute>
+                } 
+              />
+              <Route 
+                path="/module/:moduleSlug/:pageSlug" 
+                element={
+                  <ProtectedUserRoute>
+                    <ContentPage modules={modules} />
+                  </ProtectedUserRoute>
+                } 
+              />
+              <Route 
+                path="*" 
+                element={<Navigate to="/" replace />} 
+              />
+            </Routes>
+          </Suspense>
         </main>
       </div>
     </div>

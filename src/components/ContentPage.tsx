@@ -2,7 +2,7 @@ import { useParams, Link, Navigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
-import axios from 'axios'
+import api from '../lib/api'
 import HomePage from './pages/HomePage'
 import QuizPage from './pages/QuizPage'
 import ScalePage from './pages/ScalePage'
@@ -113,51 +113,34 @@ export default function ContentPage({ modules }: ContentPageProps) {
   // Function to update time spent on backend
   const updateTimeSpent = async (moduleSlug: string, additionalTime: number) => {
     try {
-      const API_BASE_URL = import.meta.env?.VITE_API_URL || 'http://localhost:5000/api'
-      
-      await axios.post(`${API_BASE_URL}/modules/time-spent`, {
+      await api.post('/modules/time-spent', {
         moduleSlug,
         additionalTime
-      }, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
       });
     } catch (error) {
-      console.error('❌ Failed to update time spent:', error);
+      console.error('Failed to update time spent:', error);
     }
   }
 
   // Function to enroll user and update progress
   const enrollAndUpdateProgress = async (progressData: ModuleProgress) => {
     try {
-      const API_BASE_URL = import.meta.env?.VITE_API_URL || 'http://localhost:5000/api'
-      
-      console.log('🔄 Attempting to enroll user:', progressData.moduleSlug)
-      
       // First, try to enroll user
       try {
-        const enrollResponse = await axios.post(`${API_BASE_URL}/modules/enroll`, {
+        await api.post('/modules/enroll', {
           moduleSlug: progressData.moduleSlug,
           moduleName: progressData.moduleName,
           totalPages: progressData.totalPages
-        }, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
         });
-        console.log('✅ Enrollment response:', enrollResponse.data);
       } catch (enrollError: any) {
         // If already enrolled, that's fine - continue with progress update
         if (enrollError.response?.status !== 400) {
           throw enrollError;
-        } else {
-          console.log('ℹ️ User already enrolled, continuing with progress update');
         }
       }
 
       // Then update progress
-      const progressResponse = await axios.post(`${API_BASE_URL}/modules/progress`, {
+      await api.post('/modules/progress', {
         moduleSlug: progressData.moduleSlug,
         moduleName: progressData.moduleName,
         currentPage: progressData.currentPage,
@@ -165,15 +148,9 @@ export default function ContentPage({ modules }: ContentPageProps) {
         totalPages: progressData.totalPages,
         completedPages: progressData.completedPages,
         timeSpent: progressData.timeSpent
-      }, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
       });
-      console.log('✅ Progress update response:', progressResponse.data);
-    } catch (error) {
-      console.error('❌ Failed to enroll/update progress:', error);
-      // Continue silently - localStorage is the primary source
+    } catch (error: any) {
+      console.error('Failed to enroll/update progress:', error);
     }
   }
 

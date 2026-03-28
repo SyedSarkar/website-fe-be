@@ -10,19 +10,19 @@ interface ScaleItem {
 }
 
 const scaleItems: ScaleItem[] = [
-  { id: 1, text: "My child seems sad or unhappy most of the time" },
-  { id: 2, text: "My child has lost interest in activities they used to enjoy" },
-  { id: 3, text: "My child complains of physical symptoms like headaches or stomachaches" },
-  { id: 4, text: "My child has trouble sleeping or sleeps too much" },
-  { id: 5, text: "My child has changes in appetite (eating more or less than usual)" },
-  { id: 6, text: "My child seems more irritable or angry than usual" },
-  { id: 7, text: "My child has difficulty concentrating on tasks" },
-  { id: 8, text: "My child avoids social situations with friends or family" },
-  { id: 9, text: "My child expresses feelings of worthlessness or guilt" },
-  { id: 10, text: "My child talks about the future in a negative way" }
+  { id: 1, text: "I can always solve problems for my child, even when they are difficult" },
+  { id: 2, text: "I can help my child feel better when they are upset or worried" },
+  { id: 3, text: "I can successfully handle my child's behavioral problems" },
+  { id: 4, text: "I can make my child feel loved and cared for" },
+  { id: 5, text: "I can help my child succeed in school or other activities" },
+  { id: 6, text: "I can effectively discipline my child when necessary" },
+  { id: 7, text: "I can communicate well with my child" },
+  { id: 8, text: "I can help my child develop good social skills" },
+  { id: 9, text: "I can protect my child from negative influences" },
+  { id: 10, text: "I can provide emotional support when my child needs it" }
 ]
 
-export default function ChildMentalHealthScale() {
+export default function ParentalSelfEfficacyScale() {
   const [ratings, setRatings] = useState<Record<number, number>>({})
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -54,16 +54,16 @@ export default function ChildMentalHealthScale() {
       const totalScore = Object.values(ratings).reduce((sum, rating) => sum + rating, 0)
 
       console.log('Submitting scale data:', {
-        scaleId: 'child-mental-health',
-        scaleName: "Child's Mental Health Scale",
+        scaleId: 'parental-self-efficacy',
+        scaleName: 'Parental Self Efficacy Scale',
         responses: ratings,
         totalScore,
         timeTaken
       })
 
       const response = await api.post('/scales/submit', {
-        scaleId: 'child-mental-health',
-        scaleName: "Child's Mental Health Scale",
+        scaleId: 'parental-self-efficacy',
+        scaleName: 'Parental Self Efficacy Scale',
         responses: ratings,
         totalScore,
         timeTaken
@@ -72,11 +72,11 @@ export default function ChildMentalHealthScale() {
       console.log('Scale submission response:', response.data)
 
       setIsSubmitted(true)
-      markScaleCompleted('child-mental-health')
+      markScaleCompleted('parental-self-efficacy')
       
       // Store in localStorage as backup
       const results = {
-        scaleId: 'child-mental-health',
+        scaleId: 'parental-self-efficacy',
         ratings,
         totalScore,
         completedAt: new Date().toISOString()
@@ -114,12 +114,12 @@ export default function ChildMentalHealthScale() {
           </div>
           <h1 className="text-3xl font-bold text-gray-800 mb-4">Assessment Completed</h1>
           <p className="text-lg text-gray-600 mb-6">
-            Thank you for completing the Child's Mental Health Scale.
+            Thank you for completing the Parental Self Efficacy Scale.
           </p>
           <div className="bg-white rounded-lg p-6 mb-6">
             <p className="text-gray-700 mb-4">Your responses have been recorded.</p>
             <p className="text-sm text-gray-600">
-              This assessment helps us provide you with the most relevant content and support.
+              This assessment helps us understand your confidence in parenting abilities.
             </p>
           </div>
           <button
@@ -138,13 +138,13 @@ export default function ChildMentalHealthScale() {
       <div className="bg-gradient-to-br from-teal-50 to-blue-50 rounded-2xl shadow-xl p-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-4">
-            Child's Mental Health Assessment
+            Parental Self Efficacy Assessment
           </h1>
           <p className="text-lg text-gray-600 mb-2">
-            Please rate how much each statement applies to your child during the past month.
+            Please rate how confident you are in your ability to handle each parenting situation.
           </p>
           <p className="text-sm text-gray-500">
-            Rate each item on a scale from 1 (Never) to 4 (Always)
+            Rate each item on a scale from 1 (Not at all confident) to 4 (Very confident)
           </p>
         </div>
 
@@ -180,10 +180,10 @@ export default function ChildMentalHealthScale() {
                       ))}
                     </div>
                     <div className="text-xs text-gray-500 space-x-3">
-                      <span>Never</span>
-                      <span>Sometimes</span>
-                      <span>Often</span>
-                      <span>Always</span>
+                      <span>Not confident</span>
+                      <span>Somewhat</span>
+                      <span>Confident</span>
+                      <span>Very confident</span>
                     </div>
                   </div>
                 </div>

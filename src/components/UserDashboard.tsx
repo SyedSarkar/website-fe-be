@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import axios from 'axios'
+import { useScaleCompletion } from '../hooks/useScaleCompletion'
+import api from '../lib/api'
 import { 
   BarChart3, 
   TrendingUp, 
   Clock, 
   BookOpen, 
   Target,
-  User
+  User,
+  RefreshCw
 } from 'lucide-react'
 
 interface ScaleResponse {
@@ -54,32 +56,57 @@ interface UserStats {
 
 export default function UserDashboard() {
   const { user, logout } = useAuth()
+  const { allScalesCompleted, loading: scalesLoading, refresh } = useScaleCompletion()
+  const navigate = useNavigate()
   const [scaleResponses, setScaleResponses] = useState<ScaleResponse[]>([])
   const [moduleProgress, setModuleProgress] = useState<ModuleProgress[]>([])
   const [userStats, setUserStats] = useState<UserStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'overview' | 'scales' | 'modules'>('overview')
 
-  const API_BASE_URL = import.meta.env?.VITE_API_URL || 'http://localhost:5000/api'
+  const handleRedoAssessment = async (scaleId: string) => {
+    if (!confirm('Are you sure you want to redo this assessment? Your previous score will be replaced.')) {
+      return
+    }
+
+    try {
+      // Delete the existing scale response
+      await api.delete(`/scales/response/${scaleId}`)
+      
+      // Refresh the scale completion data
+      await refresh()
+      
+      // Navigate to the scale
+      navigate(`/dashboard`)
+    } catch (error: any) {
+      console.error('Failed to redo assessment:', error)
+      alert('Failed to redo assessment. Please try again.')
+    }
+  }
 
   useEffect(() => {
+    if (scalesLoading) return
+
+    // Check if all required scales are completed
+    if (!allScalesCompleted()) {
+      navigate('/dashboard')
+      return
+    }
+
     if (user) {
       fetchUserData()
     }
-  }, [user])
+  }, [user, navigate, allScalesCompleted, scalesLoading])
 
   const fetchUserData = async () => {
     try {
-      // Fetch scale responses
-      const scalesResponse = await axios.get(`${API_BASE_URL}/scales/my-responses`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      })
+      // Fetch scale responses and module progress in parallel
+      const [scalesResponse, modulesResponse] = await Promise.all([
+        api.get('/scales/my-responses'),
+        api.get('/modules/my-progress')
+      ])
+      
       setScaleResponses(scalesResponse.data.data || [])
-
-      // Fetch module progress
-      const modulesResponse = await axios.get(`${API_BASE_URL}/modules/my-progress`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      })
       setModuleProgress(modulesResponse.data.data || [])
 
       // Calculate user stats
@@ -339,16 +366,16 @@ export default function UserDashboard() {
               </div>
               <div className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Link
-                    to="/scale/child-mental-health"
+                  <button
+                    onClick={() => setActiveTab('scales')}
                     className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <Target className="w-8 h-8 text-teal-600 mr-3" />
                     <div>
-                      <p className="font-medium text-gray-900">Take New Scale</p>
-                      <p className="text-sm text-gray-500">Complete assessment</p>
+                      <p className="font-medium text-gray-900">Review Scales</p>
+                      <p className="text-sm text-gray-500">View assessments</p>
                     </div>
-                  </Link>
+                  </button>
                   
                   <Link
                     to="/module/m1-connect/00-home"
@@ -403,6 +430,9 @@ export default function UserDashboard() {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Time Taken
                       </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -425,11 +455,20 @@ export default function UserDashboard() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {scale.timeTaken} min
                         </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <button
+                            onClick={() => handleRedoAssessment(scale.scaleId)}
+                            className="inline-flex items-center px-3 py-1 bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors"
+                          >
+                            <RefreshCw className="w-4 h-4 mr-1" />
+                            Redo
+                          </button>
+                        </td>
                       </tr>
                     ))}
                     {scaleResponses.length === 0 && (
                       <tr>
-                        <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                        <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
                           No scale responses found. Take your first assessment to get started!
                         </td>
                       </tr>

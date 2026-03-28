@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { ChevronDown, ChevronRight, X, BookOpen, Check } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
+import api from '../lib/api'
 import type { Module } from '../types'
 
 interface SidebarProps {
@@ -70,17 +71,11 @@ export default function Sidebar({ modules, onClose }: SidebarProps) {
     // Load progress from backend (user-specific) instead of localStorage
     const fetchProgress = async () => {
       try {
-        const API_BASE_URL = import.meta.env?.VITE_API_URL || 'http://localhost:5000/api'
-        const response = await fetch(`${API_BASE_URL}/modules/my-progress`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        })
+        const response = await api.get('/modules/my-progress')
         
-        if (response.ok) {
-          const data = await response.json()
-          console.log('Sidebar progress data:', data)
-          const progressData = data.data || []
+        if (response.data) {
+          console.log('Sidebar progress data:', response.data)
+          const progressData = response.data.data || []
           setModuleProgress(Array.isArray(progressData) ? progressData : [])
         } else {
           console.log('Sidebar progress fetch failed:', response.status)
@@ -182,7 +177,7 @@ export default function Sidebar({ modules, onClose }: SidebarProps) {
                     <Link
                       to={`/module/${module.slug}/${page.slug}`}
                       onClick={onClose}
-                      className={`block px-3 py-2 rounded-md text-sm transition-colors flex items-center gap-2 ${
+                      className={`px-3 py-2 rounded-md text-sm transition-colors flex items-center gap-2 ${
                         isActive(module.slug, page.slug)
                           ? 'bg-teal-100 text-teal-800 font-medium'
                           : 'text-gray-600 hover:bg-gray-50'

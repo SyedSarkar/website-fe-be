@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
-import axios from 'axios'
+import api from '../../lib/api'
 
 interface AdminStats {
   totalUsers: number
@@ -178,10 +178,6 @@ export default function AdminDashboard() {
   const [editUser, setEditUser] = useState<Partial<User>>({})
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
 
-  // Configure axios base URL
-  const API_BASE_URL = import.meta.env?.VITE_API_URL || 'http://localhost:5000/api'
-  axios.defaults.baseURL = API_BASE_URL
-
   useEffect(() => {
     if (user?.role !== 'admin') {
       return
@@ -202,7 +198,7 @@ export default function AdminDashboard() {
   const fetchUserPerformance = async (userId: string) => {
     console.log('Fetching performance for user:', userId);
     try {
-      const response = await axios.get(`/admin/users/${userId}/performance`);
+      const response = await api.get(`/admin/users/${userId}/performance`);
       console.log('Performance response:', response.data);
       setPerformanceData(response.data.data);
       setShowPerformanceDetails(true);
@@ -214,7 +210,7 @@ export default function AdminDashboard() {
 
   const fetchAllUsersPerformance = async () => {
     try {
-      const response = await axios.get('/admin/performance');
+      const response = await api.get('/admin/performance');
       if (response.data?.data && Array.isArray(response.data.data)) {
         setAllUsersPerformance(response.data.data);
       } else {
@@ -228,7 +224,7 @@ export default function AdminDashboard() {
 
   const fetchStats = async () => {
     try {
-      const response = await axios.get('/admin/stats');
+      const response = await api.get('/admin/stats');
       if (response.data?.data) {
         setStats(response.data.data);
       } else {
@@ -263,7 +259,7 @@ export default function AdminDashboard() {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('/admin/users', {
+      const response = await api.get('/admin/users', {
         params: { page: currentPage, limit: 10, search: searchTerm }
       })
       setUsers(response.data.data.users)
@@ -274,7 +270,7 @@ export default function AdminDashboard() {
 
   const fetchResponses = async () => {
     try {
-      const response = await axios.get('/admin/responses', {
+      const response = await api.get('/admin/responses', {
         params: { page: currentPage, limit: 20 }
       })
       setResponses(response.data.data.responses)
@@ -285,7 +281,7 @@ export default function AdminDashboard() {
 
   const exportData = async (type: 'users' | 'responses' | 'performance') => {
     try {
-      const response = await axios.get(`/admin/export/${type}`, {
+      const response = await api.get(`/admin/export/${type}`, {
         responseType: 'blob'
       })
       
@@ -303,7 +299,7 @@ export default function AdminDashboard() {
 
   const createUser = async () => {
     try {
-      const response = await axios.post('/admin/users', newUser)
+      const response = await api.post('/admin/users', newUser)
       if (response.data.status === 'success') {
         setShowCreateUser(false)
         setNewUser({ name: '', email: '', password: '', role: 'user' })
@@ -319,7 +315,7 @@ export default function AdminDashboard() {
     if (!selectedUser) return
     
     try {
-      const response = await axios.patch(`/admin/users/${selectedUser._id}`, editUser)
+      const response = await api.patch(`/admin/users/${selectedUser._id}`, editUser)
       if (response.data.status === 'success') {
         setShowEditUser(false)
         setSelectedUser(null)
@@ -334,7 +330,7 @@ export default function AdminDashboard() {
 
   const deleteUser = async (userId: string) => {
     try {
-      const response = await axios.delete(`/admin/users/${userId}`)
+      const response = await api.delete(`/admin/users/${userId}`)
       if (response.data.status === 'success') {
         setDeleteConfirm(null)
         fetchUsers()
@@ -350,7 +346,7 @@ export default function AdminDashboard() {
     if (!newPassword) return
     
     try {
-      const response = await axios.post(`/admin/users/${userId}/reset-password`, {
+      const response = await api.post(`/admin/users/${userId}/reset-password`, {
         newPassword
       })
       if (response.data.status === 'success') {
