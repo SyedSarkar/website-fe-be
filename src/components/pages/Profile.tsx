@@ -250,9 +250,17 @@ export default function Profile() {
                       ) : (
                         <p className="text-gray-900 flex items-center">
                           <span className="text-gray-400 mr-2">📞</span>
-                          {formData.phone || 'Not provided'}
+                          {user?.personalInfo?.phoneNumber || formData.phone || 'Not provided'}
                         </p>
                       )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                      <p className="text-gray-900 flex items-center">
+                        <span className="text-gray-400 mr-2">📍</span>
+                        {user?.personalInfo?.city ? `${user.personalInfo.city}, ${user.personalInfo.postcode}` : 'Not provided'}
+                      </p>
                     </div>
 
                     <div>

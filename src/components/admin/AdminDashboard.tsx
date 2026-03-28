@@ -50,10 +50,45 @@ interface AdminStats {
 interface User {
   _id: string
   name: string
+  surname?: string
   email: string
   role: string
   createdAt: string
   lastLogin?: string
+  onboardingCompleted?: boolean
+  onboardingStep?: number
+  eligibility?: {
+    isEligible?: boolean
+    reason?: string
+  }
+  personalInfo?: {
+    age?: number
+    gender?: string
+    city?: string
+    postcode?: string
+    phoneNumber?: string
+    alternativeContact?: string
+  }
+  familyInfo?: {
+    ethnicity?: string
+    relationshipStatus?: string
+    education?: string
+    householdIncome?: string
+  }
+  teenInfo?: {
+    firstName?: string
+    age?: number
+    gender?: string
+    schoolGrade?: string
+    relationship?: string
+  }
+  consent?: {
+    given?: boolean
+    date?: string
+    acceptedTerms?: boolean
+    acceptedPrivacy?: boolean
+    acceptedResearch?: boolean
+  }
 }
 
 interface NewUser {
@@ -177,6 +212,10 @@ export default function AdminDashboard() {
   })
   const [editUser, setEditUser] = useState<Partial<User>>({})
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
+  
+  // View details state
+  const [showUserDetails, setShowUserDetails] = useState(false)
+  const [viewingUser, setViewingUser] = useState<User | null>(null)
 
   useEffect(() => {
     if (user?.role !== 'admin') {
@@ -370,6 +409,11 @@ export default function AdminDashboard() {
       role: user.role
     })
     setShowEditUser(true)
+  }
+
+  const openViewDetails = (user: User) => {
+    setViewingUser(user)
+    setShowUserDetails(true)
   }
 
   if (user?.role !== 'admin') {
@@ -711,6 +755,12 @@ export default function AdminDashboard() {
                         Last Login
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Onboarding
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Teen
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
@@ -742,8 +792,35 @@ export default function AdminDashboard() {
                             : 'Never'
                           }
                         </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            user.onboardingCompleted 
+                              ? 'bg-green-100 text-green-800' 
+                              : 'bg-yellow-100 text-yellow-800'
+                          }`}>
+                            {user.onboardingCompleted ? 'Completed' : `Step ${(user.onboardingStep || 0) + 1}`}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {user.teenInfo?.firstName ? (
+                            <div>
+                              <span className="font-medium">{user.teenInfo.firstName}</span>
+                              <span className="text-xs text-gray-400 block">
+                                {user.teenInfo.age ? `${user.teenInfo.age} yrs` : ''}
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-gray-400">-</span>
+                          )}
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           <div className="flex gap-2">
+                            <button
+                              onClick={() => openViewDetails(user)}
+                              className="px-3 py-1 bg-teal-600 text-white rounded hover:bg-teal-700"
+                            >
+                              View Details
+                            </button>
                             <button
                               onClick={() => openEditUser(user)}
                               className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
@@ -1325,6 +1402,182 @@ export default function AdminDashboard() {
               <div className="flex justify-end">
                 <button
                   onClick={() => setShowPerformanceDetails(false)}
+                  className="px-6 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* User Details Modal */}
+      {showUserDetails && viewingUser && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative min-h-screen flex items-center justify-center">
+            <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full m-4 p-6 max-h-[90vh] overflow-y-auto">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-bold text-gray-900">User Details</h3>
+                <button
+                  onClick={() => setShowUserDetails(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                  title="Close user details"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Basic Info */}
+              <div className="bg-gray-50 p-4 rounded-lg mb-6">
+                <h4 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h4>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-600">Name</p>
+                    <p className="font-medium">{viewingUser.name} {viewingUser.surname}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Email</p>
+                    <p className="font-medium">{viewingUser.email}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Role</p>
+                    <p className="font-medium">{viewingUser.role}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Joined</p>
+                    <p className="font-medium">{new Date(viewingUser.createdAt).toLocaleDateString()}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Onboarding Status</p>
+                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                      viewingUser.onboardingCompleted 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {viewingUser.onboardingCompleted ? 'Completed' : 'In Progress'}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Consent Given</p>
+                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                      viewingUser.consent?.given 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-red-100 text-red-800'
+                    }`}>
+                      {viewingUser.consent?.given ? 'Yes' : 'No'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Personal Info */}
+              {viewingUser.personalInfo && (
+                <div className="bg-blue-50 p-4 rounded-lg mb-6">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Personal Information</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div>
+                      <p className="text-sm text-gray-600">Age</p>
+                      <p className="font-medium">{viewingUser.personalInfo.age || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">Gender</p>
+                      <p className="font-medium capitalize">{viewingUser.personalInfo.gender || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">City</p>
+                      <p className="font-medium">{viewingUser.personalInfo.city || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">Phone</p>
+                      <p className="font-medium">{viewingUser.personalInfo.phoneNumber || 'N/A'}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Family Info */}
+              {viewingUser.familyInfo && (
+                <div className="bg-purple-50 p-4 rounded-lg mb-6">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Family Information</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div>
+                      <p className="text-sm text-gray-600">Ethnicity</p>
+                      <p className="font-medium capitalize">{viewingUser.familyInfo.ethnicity || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">Relationship Status</p>
+                      <p className="font-medium capitalize">{viewingUser.familyInfo.relationshipStatus || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">Education</p>
+                      <p className="font-medium capitalize">{viewingUser.familyInfo.education || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">Household Income</p>
+                      <p className="font-medium">{viewingUser.familyInfo.householdIncome || 'N/A'}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Teen Info */}
+              {viewingUser.teenInfo && (
+                <div className="bg-teal-50 p-4 rounded-lg mb-6">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Teenager Information</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div>
+                      <p className="text-sm text-gray-600">First Name</p>
+                      <p className="font-medium">{viewingUser.teenInfo.firstName || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">Age</p>
+                      <p className="font-medium">{viewingUser.teenInfo.age || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">Gender</p>
+                      <p className="font-medium capitalize">{viewingUser.teenInfo.gender || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">School Grade</p>
+                      <p className="font-medium">{viewingUser.teenInfo.schoolGrade || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">Relationship</p>
+                      <p className="font-medium capitalize">{viewingUser.teenInfo.relationship || 'N/A'}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Eligibility */}
+              {viewingUser.eligibility && (
+                <div className="bg-yellow-50 p-4 rounded-lg mb-6">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Eligibility</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-gray-600">Eligible</p>
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        viewingUser.eligibility.isEligible 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-red-100 text-red-800'
+                      }`}>
+                        {viewingUser.eligibility.isEligible ? 'Yes' : 'No'}
+                      </span>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">Reason</p>
+                      <p className="font-medium capitalize">{viewingUser.eligibility.reason || 'N/A'}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex justify-end">
+                <button
+                  onClick={() => setShowUserDetails(false)}
                   className="px-6 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
                 >
                   Close

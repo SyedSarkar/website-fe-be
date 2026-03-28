@@ -16,6 +16,7 @@ const Home = lazy(() => import('./components/pages/Home'))
 const Contact = lazy(() => import('./components/pages/Contact'))
 const Profile = lazy(() => import('./components/pages/Profile'))
 const Resources = lazy(() => import('./components/pages/Resources'))
+const OnboardingFlow = lazy(() => import('./components/onboarding/OnboardingFlow'))
 
 // Protected route component for non-admin users
 function ProtectedUserRoute({ children }: { children: React.ReactNode }) {
@@ -25,6 +26,10 @@ function ProtectedUserRoute({ children }: { children: React.ReactNode }) {
   }
   if (user.role === 'admin') {
     return <Navigate to="/admin" replace />
+  }
+  // Redirect to onboarding if not completed
+  if (!user.onboardingCompleted && location.pathname !== '/onboarding') {
+    return <Navigate to="/onboarding" replace />
   }
   return <>{children}</>
 }
@@ -153,6 +158,14 @@ function AppContent() {
                   <ProtectedAdminRoute>
                     <AdminDashboard />
                   </ProtectedAdminRoute>
+                } 
+              />
+              <Route 
+                path="/onboarding" 
+                element={
+                  <ProtectedUserRoute>
+                    <OnboardingFlow />
+                  </ProtectedUserRoute>
                 } 
               />
               <Route 

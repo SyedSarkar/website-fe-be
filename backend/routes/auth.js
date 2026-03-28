@@ -101,9 +101,17 @@ router.post('/login', async (req, res, next) => {
         user: {
           id: user._id,
           name: user.name,
+          surname: user.surname,
           email: user.email,
           role: user.role,
-          lastLogin: user.lastLogin
+          lastLogin: user.lastLogin,
+          onboardingCompleted: user.onboardingCompleted,
+          onboardingStep: user.onboardingStep,
+          eligibility: user.eligibility,
+          personalInfo: user.personalInfo,
+          familyInfo: user.familyInfo,
+          teenInfo: user.teenInfo,
+          consent: user.consent
         }
       }
     });
@@ -123,14 +131,95 @@ router.get('/me', protect, async (req, res, next) => {
         user: {
           id: user._id,
           name: user.name,
+          surname: user.surname,
           email: user.email,
           role: user.role,
           createdAt: user.createdAt,
-          lastLogin: user.lastLogin
+          lastLogin: user.lastLogin,
+          onboardingCompleted: user.onboardingCompleted,
+          onboardingStep: user.onboardingStep,
+          eligibility: user.eligibility,
+          personalInfo: user.personalInfo,
+          familyInfo: user.familyInfo,
+          teenInfo: user.teenInfo,
+          consent: user.consent
         }
       }
     });
   } catch (error) {
+    next(error);
+  }
+});
+
+// Update onboarding progress (protected route)
+router.patch('/onboarding', protect, async (req, res, next) => {
+  try {
+    const {
+      onboardingStep,
+      onboardingCompleted,
+      eligibility,
+      personalInfo,
+      familyInfo,
+      teenInfo,
+      consent
+    } = req.body;
+
+    // Helper function to remove empty strings from an object
+    const cleanEmptyStrings = (obj) => {
+      if (!obj || typeof obj !== 'object') return obj;
+      const cleaned = {};
+      for (const [key, value] of Object.entries(obj)) {
+        if (value !== '' && value !== undefined) {
+          cleaned[key] = value;
+        }
+      }
+      return cleaned;
+    };
+
+    // Build update object dynamically
+    const updateFields = {};
+    
+    if (onboardingStep !== undefined) updateFields.onboardingStep = onboardingStep;
+    if (onboardingCompleted !== undefined) updateFields.onboardingCompleted = onboardingCompleted;
+    if (eligibility) updateFields.eligibility = cleanEmptyStrings(eligibility);
+    if (personalInfo) updateFields.personalInfo = cleanEmptyStrings(personalInfo);
+    if (familyInfo) updateFields.familyInfo = cleanEmptyStrings(familyInfo);
+    if (teenInfo) updateFields.teenInfo = cleanEmptyStrings(teenInfo);
+    if (consent) {
+      updateFields.consent = {
+        ...cleanEmptyStrings(consent),
+        date: consent.given ? new Date() : consent.date
+      };
+    }
+
+    // Update user
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      updateFields,
+      { new: true, runValidators: true }
+    );
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        user: {
+          id: user._id,
+          name: user.name,
+          surname: user.surname,
+          email: user.email,
+          role: user.role,
+          onboardingCompleted: user.onboardingCompleted,
+          onboardingStep: user.onboardingStep,
+          eligibility: user.eligibility,
+          personalInfo: user.personalInfo,
+          familyInfo: user.familyInfo,
+          teenInfo: user.teenInfo,
+          consent: user.consent
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Onboarding update error:', error.message, error.stack);
     next(error);
   }
 });

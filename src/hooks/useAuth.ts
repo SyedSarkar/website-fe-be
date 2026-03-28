@@ -1,13 +1,64 @@
 import { useState, useEffect, useContext, createContext, createElement } from 'react'
 import axios from 'axios'
 
+interface PersonalInfo {
+  name?: string
+  surname?: string
+  age?: number
+  gender?: string
+  city?: string
+  postcode?: string
+  phoneNumber?: string
+  alternativeContact?: string
+}
+
+interface FamilyInfo {
+  ethnicity?: string
+  ethnicityOther?: string
+  relationshipStatus?: string
+  education?: string
+  householdIncome?: string
+  covidImpact?: string[]
+}
+
+interface TeenInfo {
+  firstName?: string
+  dateOfBirth?: string
+  age?: number
+  schoolGrade?: string
+  gender?: string
+  relationship?: string
+  otherParentInProgram?: string
+}
+
+interface Consent {
+  given?: boolean
+  date?: string
+  acceptedTerms?: boolean
+  acceptedPrivacy?: boolean
+  acceptedResearch?: boolean
+}
+
+interface Eligibility {
+  isEligible?: boolean
+  reason?: string | null
+}
+
 interface User {
   id: string
   name: string
+  surname?: string
   email: string
   role: string
   createdAt?: string
   lastLogin?: string
+  onboardingCompleted?: boolean
+  onboardingStep?: number
+  eligibility?: Eligibility
+  personalInfo?: PersonalInfo
+  familyInfo?: FamilyInfo
+  teenInfo?: TeenInfo
+  consent?: Consent
 }
 
 interface AuthContextType {
@@ -16,6 +67,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>
   register: (name: string, email: string, password: string) => Promise<void>
   logout: () => void
+  setUser: (user: User | null) => void
   loading: boolean
   isAuthenticated: boolean
 }
@@ -34,18 +86,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Check for existing token on mount
+    // Only get token from localStorage, NEVER user data
     const storedToken = localStorage.getItem('token')
-    const storedUser = localStorage.getItem('user')
     
-    if (storedToken && storedUser) {
+    if (storedToken) {
       setToken(storedToken)
-      setUser(JSON.parse(storedUser))
-      // Set axios default header
       axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`
+      
+      // ALWAYS fetch fresh user from backend - no localStorage fallback
+      axios.get(`${API_BASE_URL}/auth/me`)
+        .then(response => {
+          setUser(response.data.data.user)
+        })
+        .catch(() => {
+          // Token invalid - clear and logout
+          logout()
+        })
+        .finally(() => {
+          setLoading(false)
+        })
+    } else {
+      setLoading(false)
     }
-    
-    setLoading(false)
   }, [])
 
   const login = async (email: string, password: string) => {
@@ -60,9 +122,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setToken(newToken)
       setUser(data.user)
       
-      // Store in localStorage
+      // Only store token in localStorage, NEVER user data
       localStorage.setItem('token', newToken)
-      localStorage.setItem('user', JSON.stringify(data.user))
       
       // Set axios default header
       axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`
@@ -85,9 +146,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setToken(newToken)
       setUser(data.user)
       
-      // Store in localStorage
+      // Only store token in localStorage, NEVER user data
       localStorage.setItem('token', newToken)
-      localStorage.setItem('user', JSON.stringify(data.user))
       
       // Set axios default header
       axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`
@@ -101,7 +161,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null)
     setToken(null)
     localStorage.removeItem('token')
-    localStorage.removeItem('user')
     delete axios.defaults.headers.common['Authorization']
   }
 
@@ -111,6 +170,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     login,
     register,
     logout,
+    setUser,
     loading,
     isAuthenticated: !!user
   }

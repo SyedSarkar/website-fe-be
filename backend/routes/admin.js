@@ -1,5 +1,4 @@
 import express from 'express';
-import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 import ScaleResponse from '../models/ScaleResponse.js';
 import ModuleEnrollment from '../models/ModuleEnrollment.js';
@@ -430,11 +429,11 @@ router.get('/performance', async (req, res) => {
     // Combine data for each user
     const userPerformance = users.map(user => {
       const userScaleResponses = scaleResponses.filter(response => 
-        response.user._id.toString() === user._id.toString()
+        response.user && response.user._id && response.user._id.toString() === user._id.toString()
       );
       
       const userEnrollments = moduleEnrollments.filter(enrollment => 
-        enrollment.user._id.toString() === user._id.toString()
+        enrollment.user && enrollment.user._id && enrollment.user._id.toString() === user._id.toString()
       );
 
       const totalScore = userScaleResponses.reduce((sum, response) => sum + response.totalScore, 0);
@@ -492,13 +491,6 @@ router.get('/performance', async (req, res) => {
   }
 });
 
-// Helper function to determine risk level
-function getRiskLevel(averageScore) {
-  if (averageScore <= 15) return 'Low Risk';
-  if (averageScore <= 25) return 'Moderate Risk';
-  return 'High Risk';
-}
-
 // Get all users with pagination and filtering
 router.get('/users', async (req, res) => {
   try {
@@ -516,7 +508,7 @@ router.get('/users', async (req, res) => {
     }
 
     const users = await User.find(query)
-      .select('name email role createdAt lastLogin')
+      .select('name email role createdAt lastLogin onboardingCompleted onboardingStep eligibility personalInfo familyInfo teenInfo consent')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(parseInt(limit));
@@ -590,13 +582,13 @@ router.get('/module-progress', async (req, res) => {
     if (moduleSlug) query.moduleSlug = moduleSlug;
     if (userId) query.user = userId;
 
-    const progress = await ModuleProgress.find(query)
+    const progress = await ModuleEnrollment.find(query)
       .populate('user', 'name email')
-      .sort({ lastAccessed: -1 })
+      .sort({ enrolledAt: -1 })
       .skip(skip)
       .limit(parseInt(limit));
 
-    const total = await ModuleProgress.countDocuments(query);
+    const total = await ModuleEnrollment.countDocuments(query);
 
     res.json({
       status: 'success',
@@ -622,14 +614,10 @@ router.get('/module-enrollments', async (req, res) => {
     const { page = 1, limit = 20, moduleSlug, userId, status } = req.query;
     const skip = (page - 1) * limit;
     
-    console.log('📚 Module enrollments request:', { page, limit, moduleSlug, userId, status });
-    
     let query = {};
     if (moduleSlug) query.moduleSlug = moduleSlug;
     if (userId) query.user = userId;
     if (status) query.status = status;
-
-    console.log('🔍 Final query:', query);
 
     const enrollments = await ModuleEnrollment.find(query)
       .populate('user', 'name email')
@@ -637,13 +625,7 @@ router.get('/module-enrollments', async (req, res) => {
       .skip(skip)
       .limit(parseInt(limit));
 
-    console.log('📊 Found enrollments:', enrollments.length);
-    enrollments.forEach(e => {
-      console.log(`  - ${e.user?.name} - ${e.moduleName} - ${e.status} - ${e.progress?.percentage || 0}%`);
-    });
-
     const total = await ModuleEnrollment.countDocuments(query);
-    console.log('📈 Total count in DB:', total);
 
     res.json({
       status: 'success',

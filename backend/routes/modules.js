@@ -14,8 +14,6 @@ router.post('/enroll', async (req, res) => {
   try {
     const { moduleSlug, moduleName, totalPages } = req.body;
     const userId = req.user._id;
-    
-    console.log('📝 Enrollment request:', { moduleSlug, moduleName, totalPages, userId });
 
     // Validate required fields
     if (!moduleSlug || !moduleName || totalPages === undefined) {
@@ -73,16 +71,6 @@ router.post('/progress', async (req, res) => {
   try {
     const { moduleSlug, moduleName, currentPage, currentPageSlug, totalPages, completedPages, timeSpent } = req.body;
     const userId = req.user._id;
-    
-    console.log('📈 Progress update request:', { 
-      moduleSlug, 
-      moduleName, 
-      currentPage,
-      currentPageSlug,
-      totalPages, 
-      completedPages: completedPages?.length || 0, 
-      userId 
-    });
 
     // Validate required fields
     if (!moduleSlug || !moduleName || totalPages === undefined) {
