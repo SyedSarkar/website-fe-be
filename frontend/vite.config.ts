@@ -9,7 +9,6 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
-    port: 3000,
   },
   plugins: [react()],
   base: './',

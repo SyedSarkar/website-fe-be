@@ -398,7 +398,7 @@ router.get('/users/:userId/performance', async (req, res) => {
           completionCount,
           lastCompletion,
           recommendations,
-          riskLevel: getRiskLevel(averageScore)
+          riskLevel: averageScore <= 15 ? 'Low Risk' : averageScore <= 25 ? 'Moderate Risk' : 'High Risk'
         },
         scaleResponses,
         moduleEnrollments
