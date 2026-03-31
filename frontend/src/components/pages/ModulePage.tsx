@@ -1,4 +1,5 @@
 import { ContentBlock } from '../../types'
+import { useLanguage } from '../../hooks/useLanguage'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
@@ -8,6 +9,7 @@ interface ModulePageProps {
 }
 
 export default function ModulePage({ content, moduleSlug }: ModulePageProps) {
+  const { language } = useLanguage()
   return (
     <div className="max-w-4xl mx-auto">
       <div className="bg-white rounded-2xl shadow-xl p-8">
@@ -40,7 +42,7 @@ export default function ModulePage({ content, moduleSlug }: ModulePageProps) {
             {block.type === 'image' && (
               <div className="my-6">
                 <img
-                  src={`${API_URL}/content/${moduleSlug.replace('m', 'module_').replace(/-/g, '_')}/images/${block.src}`}
+                  src={`${API_URL}/content/${moduleSlug.replace('m', 'module_').replace(/-/g, '_')}/images/${block.src}?lang=${language}`}
                   alt={block.alt || ''}
                   className="max-w-full h-auto rounded-lg shadow-md mx-auto"
                   onError={(e) => {

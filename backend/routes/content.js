@@ -9,12 +9,20 @@ const __dirname = path.dirname(__filename);
 const router = express.Router();
 
 const SCRAPED_DATA_DIR = path.join(__dirname, '..', 'scraped_data');
+const SCRAPED_DATA_URDU_DIR = path.join(__dirname, '..', 'scraped_data_urdu');
+
+// Helper to get directory based on language
+function getDataDir(lang = 'en') {
+  return lang === 'urdu' ? SCRAPED_DATA_URDU_DIR : SCRAPED_DATA_DIR;
+}
 
 // Get all pages for a module
 router.get('/:moduleId', async (req, res) => {
   try {
     const { moduleId } = req.params;
-    const modulePath = path.join(SCRAPED_DATA_DIR, moduleId);
+    const lang = req.query.lang || 'en';
+    const dataDir = getDataDir(lang);
+    const modulePath = path.join(dataDir, moduleId);
     
     // Check if directory exists
     try {
@@ -58,11 +66,13 @@ router.get('/:moduleId', async (req, res) => {
 router.get('/:moduleId/:pageId', async (req, res) => {
   try {
     const { moduleId, pageId } = req.params;
-    const filePath = path.join(SCRAPED_DATA_DIR, moduleId, `${pageId}.txt`);
+    const lang = req.query.lang || 'en';
+    const dataDir = getDataDir(lang);
+    const filePath = path.join(dataDir, moduleId, `${pageId}.txt`);
     
     // Security: prevent directory traversal
     const resolvedPath = path.resolve(filePath);
-    const resolvedRoot = path.resolve(SCRAPED_DATA_DIR);
+    const resolvedRoot = path.resolve(dataDir);
     if (!resolvedPath.startsWith(resolvedRoot)) {
       return res.status(403).json({
         status: 'fail',
@@ -98,7 +108,9 @@ router.get('/:moduleId/:pageId', async (req, res) => {
 // List all available modules
 router.get('/', async (req, res) => {
   try {
-    const entries = await fs.readdir(SCRAPED_DATA_DIR, { withFileTypes: true });
+    const lang = req.query.lang || 'en';
+    const dataDir = getDataDir(lang);
+    const entries = await fs.readdir(dataDir, { withFileTypes: true });
     const modules = entries
       .filter(e => e.isDirectory())
       .map(e => e.name);
@@ -123,11 +135,13 @@ router.get('/', async (req, res) => {
 router.get('/:moduleId/images/:imageName', async (req, res) => {
   try {
     const { moduleId, imageName } = req.params;
-    const filePath = path.join(SCRAPED_DATA_DIR, moduleId, 'images', imageName);
+    const lang = req.query.lang || 'en';
+    const dataDir = getDataDir(lang);
+    const filePath = path.join(dataDir, moduleId, 'images', imageName);
     
     // Security: prevent directory traversal
     const resolvedPath = path.resolve(filePath);
-    const resolvedRoot = path.resolve(SCRAPED_DATA_DIR);
+    const resolvedRoot = path.resolve(dataDir);
     if (!resolvedPath.startsWith(resolvedRoot)) {
       return res.status(403).json({
         status: 'fail',

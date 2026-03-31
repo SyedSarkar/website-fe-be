@@ -1,7 +1,9 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './hooks/useAuth'
+import { LanguageProvider, useLanguage } from './hooks/useLanguage'
 import Sidebar from './components/Sidebar'
+import LanguageSwitcher from './components/LanguageSwitcher'
 import { Module } from './types'
 import { parseAllModules } from './data/parser'
 
@@ -48,6 +50,7 @@ function ProtectedAdminRoute({ children }: { children: React.ReactNode }) {
 
 function AppContent() {
   const { user } = useAuth()
+  const { language } = useLanguage()
   const [modules, setModules] = useState<Module[]>([])
   const [loading, setLoading] = useState(true)
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -55,8 +58,8 @@ function AppContent() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        console.log('Loading modules...')
-        const parsedModules = await parseAllModules()
+        console.log('Loading modules...', language)
+        const parsedModules = await parseAllModules(language)
         console.log('Loaded modules:', parsedModules.length, parsedModules.map(m => m.name))
         setModules(parsedModules)
       } catch (error) {
@@ -66,7 +69,7 @@ function AppContent() {
       }
     }
     loadData()
-  }, [])
+  }, [language])
 
   if (loading) {
     return (
@@ -119,7 +122,7 @@ function AppContent() {
               </svg>
             </button>
             <span className="font-semibold text-gray-800">Partners in Parenting</span>
-            <div className="w-10" /> {/* Spacer for alignment */}
+            <LanguageSwitcher />
           </header>
         )}
 
@@ -214,7 +217,9 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <LanguageProvider>
+        <AppContent />
+      </LanguageProvider>
     </AuthProvider>
   )
 }

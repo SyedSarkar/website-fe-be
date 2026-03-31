@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { ChevronDown, ChevronRight, X, BookOpen, Check } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
+import LanguageSwitcher from './LanguageSwitcher'
 import api from '../lib/api'
 import type { Module } from '../types'
 
@@ -133,12 +134,15 @@ export default function Sidebar({ modules, onClose }: SidebarProps) {
           <BookOpen className="w-6 h-6 text-teal-600" />
           <h1 className="font-bold text-lg text-teal-800">Partners in Parenting</h1>
         </div>
-        <button
-          onClick={onClose}
-          className="lg:hidden p-1 rounded-md hover:bg-gray-100"
-        >
-          <X className="w-5 h-5 text-gray-500" />
-        </button>
+        <div className="flex items-center gap-2">
+          <LanguageSwitcher />
+          <button
+            onClick={onClose}
+            className="lg:hidden p-1 rounded-md hover:bg-gray-100"
+          >
+            <X className="w-5 h-5 text-gray-500" />
+          </button>
+        </div>
       </div>
 
       {/* Navigation */}

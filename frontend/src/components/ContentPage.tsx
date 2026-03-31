@@ -150,7 +150,10 @@ export default function ContentPage({ modules }: ContentPageProps) {
         timeSpent: progressData.timeSpent
       });
     } catch (error: any) {
-      console.error('Failed to enroll/update progress:', error);
+      // Only log actual errors, not expected 400 (already enrolled)
+      if (error.response?.status !== 400) {
+        console.error('Failed to enroll/update progress:', error);
+      }
     }
   }
 

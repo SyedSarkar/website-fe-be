@@ -42,14 +42,19 @@ const titleMappings: Record<string, string> = {
   '22-dont-blame-yourself': 'Keep in mind',
 }
 
-
-export async function parseAllModules(): Promise<Module[]> {
+// Parse all modules with language support
+export async function parseAllModules(language: string = 'en'): Promise<Module[]> {
   const modules: Module[] = []
+  
   for (const config of modulesConfig) {
     try {
-      const pages = await loadModulePages(config.id, config.slug, config.name, config.pages)
+      const pages = await loadModulePages(config.id, config.slug, config.name, config.pages, language)
       if (pages.length > 0) {
-        modules.push({ slug: config.slug, name: config.name, pages })
+        modules.push({
+          slug: config.slug,
+          name: config.name,
+          pages
+        })
       }
     } catch (error) {
       console.warn(`Failed to load module ${config.id}:`, error)
@@ -58,9 +63,9 @@ export async function parseAllModules(): Promise<Module[]> {
   return modules
 }
 
-async function loadModulePages(moduleId: string, moduleSlug: string, moduleName: string, expectedPages: number): Promise<PageContent[]> {
+async function loadModulePages(moduleId: string, moduleSlug: string, moduleName: string, expectedPages: number, language: string = 'en'): Promise<PageContent[]> {
   const pages: PageContent[] = []
-  const pageCacheKey = `${moduleId}-${expectedPages}`
+  const pageCacheKey = `${moduleId}-${expectedPages}-${language}`
   
   // Check cache first
   if (pageCache.has(pageCacheKey)) {
@@ -86,7 +91,7 @@ async function loadModulePages(moduleId: string, moduleSlug: string, moduleName:
   // Fetch all pages in parallel (limited to expectedPages)
   const pagePromises = patterns.slice(0, expectedPages).map(async (pattern) => {
     try {
-      const response = await fetch(`${API_URL}/content/${moduleId}/${pattern}`)
+      const response = await fetch(`${API_URL}/content/${moduleId}/${pattern}?lang=${language}`)
       if (!response.ok) return null
       
       const data = await response.json()
