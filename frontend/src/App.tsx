@@ -54,9 +54,16 @@ function AppContent() {
 
   useEffect(() => {
     const loadData = async () => {
-      const parsedModules = await parseAllModules()
-      setModules(parsedModules)
-      setLoading(false)
+      try {
+        console.log('Loading modules...')
+        const parsedModules = await parseAllModules()
+        console.log('Loaded modules:', parsedModules.length, parsedModules.map(m => m.name))
+        setModules(parsedModules)
+      } catch (error) {
+        console.error('Failed to load modules:', error)
+      } finally {
+        setLoading(false)
+      }
     }
     loadData()
   }, [])

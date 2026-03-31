@@ -1,5 +1,7 @@
 import type { Module, PageContent, ContentBlock } from '../types'
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+
 const modulesConfig = [
   { id: 'module_1_connect', slug: 'm1-connect', name: 'Connect', pages: 23 },
   { id: 'module_2_parenting_in_pandemic', slug: 'm2-parenting-in-pandemic', name: 'Parenting in Pandemic', pages: 22 },
@@ -76,7 +78,7 @@ async function loadModulePages(moduleId: string, moduleSlug: string, moduleName:
     'module_7_health_habits': ['00-home', '01-checking-in', '02-why-health-habits', '03-healthy-habits', '04-sleep-nutrition', '05-physical-activity', '06-mental-wellbeing', '07-goals', '08-quiz', '09-dont-blame-yourself'],
     'module_8_problems': ['00-home', '01-checking-in', '02-why-problems', '03-problem-solving', '04-step-by-step', '05-practical-problems', '06-when-to-seek-help', '07-goals', '08-quiz', '09-dont-blame-yourself'],
     'module_9_anxiety': ['00-home', '01-checking-in', '02-why-anxiety', '03-understanding-anxiety', '04-anxiety-signs', '05-coping-strategies', '06-supporting-anxious', '07-when-professional', '08-goals', '09-quiz', '10-dont-blame-yourself'],
-    'module_10_seeking_help': ['00-home', '01-checking-in', '02-why-seeking-help', '03-recognizing-needs', '04-help-options', '05-overcoming-barriers', '06-preparing-conversation', '07-goals', '08-quiz', '09-dont-blame-yourself'],
+    'module_10_seeking_help': ['00-home', '01-checking-in', '02-mental-health', '03-risk-factors', '04-depression-signs', '05-anxiety-signs', '06-what-is-normal', '07-what-should-i-do', '08-teen-seek-help', '09-where-is-help', '10-previous-depression', '11-goals', '12-quiz', '13-dont-blame-yourself'],
   }
   
   const patterns = knownPagePatterns[moduleId] || []
@@ -84,7 +86,7 @@ async function loadModulePages(moduleId: string, moduleSlug: string, moduleName:
   // Fetch all pages in parallel (limited to expectedPages)
   const pagePromises = patterns.slice(0, expectedPages).map(async (pattern) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/content/${moduleId}/${pattern}`)
+      const response = await fetch(`${API_URL}/content/${moduleId}/${pattern}`)
       if (!response.ok) return null
       
       const data = await response.json()

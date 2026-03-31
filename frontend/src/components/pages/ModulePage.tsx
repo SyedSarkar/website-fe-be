@@ -1,5 +1,7 @@
 import { ContentBlock } from '../../types'
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+
 interface ModulePageProps {
   content: ContentBlock[]
   moduleSlug: string
@@ -38,7 +40,7 @@ export default function ModulePage({ content, moduleSlug }: ModulePageProps) {
             {block.type === 'image' && (
               <div className="my-6">
                 <img
-                  src={`${import.meta.env.VITE_API_URL}/content/${moduleSlug.replace('m', 'module_').replace('-', '_')}/images/${block.src}`}
+                  src={`${API_URL}/content/${moduleSlug.replace('m', 'module_').replace(/-/g, '_')}/images/${block.src}`}
                   alt={block.alt || ''}
                   className="max-w-full h-auto rounded-lg shadow-md mx-auto"
                   onError={(e) => {
