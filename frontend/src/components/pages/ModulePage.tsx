@@ -38,7 +38,7 @@ export default function ModulePage({ content, moduleSlug }: ModulePageProps) {
             {block.type === 'image' && (
               <div className="my-6">
                 <img
-                  src={`/scraped_data/${moduleSlug.replace('m', 'module_').replace(/-/g, '_')}/images/${block.src}`}
+                  src={`${import.meta.env.VITE_API_URL}/content/${moduleSlug.replace('m', 'module_').replace('-', '_')}/images/${block.src}`}
                   alt={block.alt || ''}
                   className="max-w-full h-auto rounded-lg shadow-md mx-auto"
                   onError={(e) => {

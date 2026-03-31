@@ -84,10 +84,13 @@ async function loadModulePages(moduleId: string, moduleSlug: string, moduleName:
   // Fetch all pages in parallel (limited to expectedPages)
   const pagePromises = patterns.slice(0, expectedPages).map(async (pattern) => {
     try {
-      const response = await fetch(`/scraped_data/${moduleId}/${pattern}.txt`)
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/content/${moduleId}/${pattern}`)
       if (!response.ok) return null
       
-      const text = await response.text()
+      const data = await response.json()
+      if (data.status !== 'success' || !data.data?.content) return null
+      
+      const text = data.data.content
       if (!text || text.trim().length < 10) return null
       
       const content = parseContent(text)

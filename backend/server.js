@@ -18,6 +18,7 @@ import scaleRoutes from './routes/scales.js';
 import userRoutes from './routes/users.js';
 import adminRoutes from './routes/admin.js';
 import moduleRoutes from './routes/modules.js';
+import contentRoutes from './routes/content.js';
 
 const app = express();
 
@@ -53,6 +54,7 @@ app.use('/api/scales', scaleRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/modules', moduleRoutes);
+app.use('/api/content', contentRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
