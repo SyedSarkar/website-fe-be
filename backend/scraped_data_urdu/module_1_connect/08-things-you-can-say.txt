@@ -1,36 +1,35 @@
-
-H1 Things you can say
-H3 Encouragement/Praise
-You worked hard; you deserve it.
-You should be proud of yourself!
-Look at your improvement!
-That 'A' reflects a lot of hard work!
-You worked really hard to get this room clean!
-Your hard work paid off!
-That's a tough one, but you'll figure it out.
-Look how far you've come!
-That's coming along nicely!
-You really worked it out!
-I see a very thorough job!
-You make it look easy!
-You've really got the hang of it!
-You did it!
-H3 Acknowledgement
-I'm listening…
-That's a very good observation.
-I can tell you really care.
-I can tell you spent a lot of time thinking this through.
-You seem to really enjoy maths.
-I noticed you were really patient with your little sister.
-The time you're putting into your homework is really paying off.
-What do you think about it?
-H3 Affection
-I love you.
-I love being with you.
-H3 Appreciation
-You really put a smile on her face with your kind words!
-Thanks for setting the table, that made a big difference.
-Thank you for helping.
-I really feel like a team when we work like this!
-“A child needs encouragement like a plant needs water.”
+H1 آپ جو کہہ سکتے ہیں
+H3 حوصلہ افزائی/تعریف
+تم نے سخت محنت کی؛ تم اس کے مستحق ہو۔
+تمہیں اپنے پر فخر ہونا چاہیے!
+اپنی بہتری دیکھو!
+یہ 'A' بہت ساری محنت کی عکاسی کرتا ہے!
+تم نے یہ کمرہ صاف کرنے کے لیے واقعی سخت محنت کی!
+تمہاری محنت رنگ لائی!
+یہ مشکل ہے، لیکن تم اسے حل کر لو گے۔
+دیکھو تم کتنی دور آ گئے ہو!
+یہ اچھا چل رہا ہے!
+تم نے واقعی اسے حل کر لیا!
+میں ایک بہت مکمل کام دیکھتا ہوں!
+تم اسے آسان لگاتے ہو!
+تم نے واقعی اسے سیکھ لیا ہے!
+تم نے کر دکھایا!
+H3 تسلیم
+میں سن رہا ہوں…
+یہ ایک بہت اچھی بات ہے۔
+مجھے لگتا ہے تم واقعی اہمیت دیتے ہو۔
+مجھے لگتا ہے تم نے اس پر سوچنے میں بہت وقت صرف کیا ہے۔
+مجھے لگتا ہے تم واقعی ریاضی سے لطف اندوز ہوتے ہو۔
+میں نے نوٹس کیا کہ تم اپنی چھوٹی بہن کے ساتھ واقعی صبر سے پیش آئے۔
+تمہارے ہوم ورک میں لگایا گیا وقت واقعی فائدہ مند ثابت ہو رہا ہے۔
+اس کے بارے میں تمہارا کیا خیال ہے؟
+H3 محبت
+میں تم سے پیار کرتا ہوں۔
+میں تمہارے ساتھ رہنا پسند کرتا ہوں۔
+H3 قدردانی
+تمہارے اچھے الفاظ سے اس کے چہرے پر واقعی مسکراہٹ آ گئی!
+میز لگانے کا شکریہ، اس نے بڑا فرق پیدا کیا۔
+مدد کرنے کا شکریہ۔
+جب ہم اس طرح کام کرتے ہیں تو مجھے واقعی ایک ٹیم ہونے کا احساس ہوتا ہے!
+"ایک بچے کو حوصلہ افزائی کی ضرورت ہوتی ہے جیسے ایک پودے کو پانی کی ضرورت ہوتی ہے۔"
 Rudolph Dreikurs

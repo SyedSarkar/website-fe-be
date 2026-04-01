@@ -1,11 +1,14 @@
+H1 کوئز
+سوال 01: اب جبکہ میرا بچہ نوعمر ہے، وہ میرے لیے ان سے پیار کا اظہار کرنا بتانے کے لیے بہت بڑا ہو چکا ہے۔
+صحیح  
+غلط  
+نہیں جانتے  
 
-H1 Quiz
-QUESTION 01: Now that my child is a teenager, they are too old for me to let them know that I love them.
-True
-False
-Don't Know
-QUESTION 02: The best way to have a conversation with my teenager is when I am busy doing something else so they don't feel like they are being interrogated.
-QUESTION 03: I respect my teenager's opinion, even if I disagree with their point of view.
-QUESTION 04: Validating the feelings my teenager is telling me in conversation will help them feel understood.
-QUESTION 05: It is a good idea to ask my teenager and explore with them what is behind the emotions they are expressing.
+سوال 02: اپنے نوعمر بچے سے گفتگو کا بہترین طریقہ یہ ہے کہ جب میں کسی اور کام میں مصروف ہوں تاکہ انہیں یہ احساس نہ ہو کہ ان سے تفتیش ہو رہی ہے۔
+
+سوال 03: میں اپنے نوعمر بچے کی رائے کا احترام کرتا ہوں، اگرچہ میں ان کے نقطہ نظر سے اتفاق نہ کروں۔
+
+سوال 04: گفتگو میں میرا نوعمر بچہ مجھے بتانے والے جذبات کی تصدیق کرنا انہیں سمجھا محسوس کرنے میں مدد دے گی۔
+
+سوال 05: اپنے نوعمر بچے سے پوچھنا اور ان کے ساتھ تلاش کرنا کہ وہ جو جذبات کا اظہار کر رہے ہیں اس کے پیچھے کیا ہے، ایک اچھا خیال ہے۔
 [IMAGE: Oriental_quiz.svg - thinking man]
