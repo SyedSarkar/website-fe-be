@@ -1,37 +1,36 @@
-
-H1 Communication styles
-These tables shows three different communication styles.
+# بات چیت کے انداز
+یہ جدول تین مختلف بات چیت کے انداز دکھاتے ہیں۔
 [IMAGE: 26-03-MCB.svg - Passive Expression]
-Passive
-Looks down and avoids eye contact
-Talks with hesitation
-Uses a ‘singsong’ or whining tone in a quiet voice
-Uses justifications, e.g. “I wouldn’t normally say anything” and fill-in words, e.g. “Maybe”, “Er”, “Sort of”
-Apologises frequently, e.g. “I’m terribly sorry to bother you...”
-Uses qualifiers, e.g. “It’s only my opinion”; or “I might be wrong”
-Dismisses own opinion, e.g. “It’s not important”; or “It doesn’t really matter”
-Puts themself down, e.g. “I’m useless...hopeless”; or “You know me...”
-Leaves the person feeling uncertain and frustrated.
+غیر فعال
+نیچے دیکھتا ہے اور آنکھوں سے رابطہ سے گریز کرتا ہے
+ہچکچا کر بات کرتا ہے
+ایک 'گانے' یا نوحہ انداز لہجے میں چپ آواز میں استعمال کرتا ہے
+جوازات استعمال کرتا ہے، مثلاً "میں عام طور پر کچھ نہیں کہوں گا" اور بھرنے والے الفاظ، مثلاً "شاید"، "ار"، "قسم کی"
+بار بار معافی مانگتا ہے، مثلاً "مجھے بہت افسوس ہے آپ کو پریشان کرنے کے لیے..."
+کوالیفائرز استعمال کرتا ہے، مثلاً "یہ صرف میری رائے ہے"؛ یا "میں غلط ہو سکتا ہوں"
+اپنی رائے کو مسترد کرتا ہے، مثلاً "یہ اہم نہیں ہے"؛ یا "یہ واقعی اہمیت نہیں رکھتا"
+اپنے آپ کو نیچا دکھاتا ہے، مثلاً "میں بے کار ہوں...امید کے بغیر"؛ یا "تم مجھے جانتے ہو..."
+اس شخص کو غیر یقینی اور مایوس محسوس کرتا ہے۔
 [IMAGE: 26-02-MCB.svg - Assertive Expression]
-Assertive
-Makes direct eye contact without staring
-Speaks in a steady, even pace with few hesitations
-Uses “I” statements (“I like”, “I want”, “I don’t like”) that are brief and to the point
-Uses a warm tone that is not overly loud or quiet
-Uses co-operative phrases, e.g. “What are your thoughts on this?”
-Expresses a willingness to explore other solutions, e.g. “How can we get around this problem?”
-Uses distinction between fact and opinion, e.g. “My experience is different”
-Gives constructive criticism without blame, e.g. “I feel frustrated when you take so long to get ready for school”
-Leaves the person feeling respected and understood.
+دعویٰ کرنے والا
+براہ راست آنکھوں سے راکہ بناتا ہے بغیر گھورنے کے
+مستقل، ایکسا رفتار میں تھوڑی ہچکچاہٹ کے ساتھ بولتا ہے
+"میں" کے بیانات استعمال کرتا ہے ("مجھے پسند ہے"، "میں چاہتا ہوں"، "مجھے پسند نہیں") جو مختصر اور براہ راست ہیں
+ایک گرم لہجہ استعمال کرتا ہے جو بہت زور دار یا چپ نہیں
+تعاون کے جملے استعمال کرتا ہے، مثلاً "اس پر تمہارے کیا خیالات ہیں؟"
+دیگر حل تلاش کرنے کی خواہش ظاہر کرتا ہے، مثلاً "ہم اس مسئلے کے ارد گرد کیسے جا سکتے ہیں؟"
+حقیقت اور رائے کے درمیان فرق استعمال کرتا ہے، مثلاً "میرا تجربہ مختلف ہے"
+بغیر الزام کے تعمیری تنقید کرتا ہے، مثلاً "میں مایوس محسوس کرتا ہوں جب تم سکول کے لیے تیار ہونے میں اتنا وقت لیتے ہو"
+اس شخص کو احترام اور سمجھ محسوس ہوتا ہے۔
 [IMAGE: 26-01-MCB.svg - Aggressive Expression]
-Aggressive
-Stares down and intimidates
-Speaks in a fast, abrupt and clipped manner
-Uses a sarcastic, cold and harsh tone that is forceful and loud.
-Uses ‘You’ statements and threats, e.g. “You’d better watch out”; or “If you don’t…”
-Uses put downs, e.g. “You’ve got to be kidding…”; or “Don’t be so stupid”
-Tells people what to do, e.g. “This is how it’s going to be from now on”
-Expresses opinions as facts, e.g. “Nobody wants to behave like that”; or “That’s a useless way to do it”
-Uses sarcasm, e.g. “You must be joking”; or “I don’t suppose you managed to do that?”
-Leaves the person feeling resentful and bullied.
-Which column best describes how you communicate with others? Try using as many assertive skills as possible in everyday situations!
+جارحانہ
+نیچے گھورتا ہے اور خوف زدہ کرتا ہے
+تیز، اچانک اور کٹا ہوا انداز میں بولتا ہے
+ایک طنز، ٹھنڈا اور سخت لہجہ استعمال کرتا ہے جو زور دار اور بلند ہے۔
+'تم' کے بیانات اور دھمکیاں استعمال کرتا ہے، مثلاً "تمہیں بہتر ہے کہ ہوشیار رہو"؛ یا "اگر تم نے نہیں کیا..."
+پٹ ڈاؤنز استعمال کرتا ہے، مثلاً "تم مذاق کر رہے ہوگے..."؛ یا "اتنے احمق مت بنو"
+لوگوں کو بتاتا ہے کہ کیا کرنا ہے، مثلاً "اب سے ایسے ہی ہوگا"
+رائے کو حقیقت کے طور پر ظاہر کرتا ہے، مثلاً "کوئی بھی ایسا برتاؤ کرنا نہیں چاہتا"؛ یا "یہ کرنے کا ایک بے کار طریقہ ہے"
+طنز استعمال کرتا ہے، مثلاً "تم مذاق کر رہے ہو"؛ یا "مجھے امید نہیں ہے کہ تم نے یہ کر لیا؟"
+اس شخص کو بدگمانی اور دھمکی محسوس ہوتا ہے۔
+کون سا کالم آپ کی دوسروں سے بات چیت کو بہتر طور پر بیان کرتا ہے؟ روزمرہ کی صورت حال میں جتنی زیادہ دعویٰ کرنے والی مہارتیں استعمال کرنے کی کوشش کریں!
