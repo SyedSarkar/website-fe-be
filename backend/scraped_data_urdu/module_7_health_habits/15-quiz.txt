@@ -1,11 +1,10 @@
-
-H1 Quiz
-QUESTION 01: Now that my child is a teenager, I should let them choose what they eat.
-True
-False
-Don't Know
-QUESTION 02: It is a good idea to have family rules about screen use that all family members agree to and follow.
-QUESTION 03: My teenager should do 60 minutes of exercise every day, all in one session.
-QUESTION 04: I should encourage my teenager to do some relaxing activities before bedtime to help them wind down from the day.
-QUESTION 05: It’s okay to let my teenager have a few sips of my alcoholic drink at home to teach them how to drink responsibly.
+H1 کوئز
+سوال 01: اب جب میرا بچہ نوعمر ہے، مجھے انھیں چننے دینا چاہیے کہ وہ کیا کھائیں۔
+صحیح
+غلط
+نہیں جانتے
+سوال 02: خاندانی قواعد بنانا ایک اچھا خیال ہے جو اسکرین استعمال کے بارے میں تمام خاندانی اراکین متفق ہوں اور ان کی پیروی کریں۔
+سوال 03: میرے نوعمر بچے کو ہر دن 60 منٹ کی ورزش کرنی چاہیے، ایک ہی سیشن میں۔
+سوال 04: مجھے اپنے نوعمر بچے کو سونے سے پہلے کچھ آرام دہ سرگرمیاں کرنے کی حوصلہ افزائی کرنی چاہیے تاکہ وہ دن سے وائنڈ ڈاؤن کر سکیں۔
+سوال 05: یہ ٹھیک ہے کہ اپنے نوعمر بچے کو گھر میں میری شراب کے کچھ گھونٹ دینا تاکہ انھیں بتایا جائے کہ ذمہ دارانہ طریقے سے کیسے پئیں۔
 [IMAGE: 51.1-01.svg - thinking woman]
