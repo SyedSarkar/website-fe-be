@@ -1,24 +1,25 @@
-
-H2 Finding the right information
-With so much constantly-changing information about the pandemic out there, it’s important to seek information from reliable and credible sources. Discuss with your teen where they are getting news and information from, and how trustworthy these sources are.How can you tell whether information is reliable and trustworthy? Click the numbers below to see some things to consider.
-Here’s an anatomy of a reliable news source.
+H2 صحیح معلومات تلاش کرنا
+وبا کے بارے میں بہت سی مستقل تبدیل ہوتی معلومات کے ساتھ، قابل اعتماد اور معتبر ذرائع سے معلومات حاصل کرنا اہم ہے۔ اپنے نوعمر بچے سے بات کریں کہ وہ خبریں اور معلومات کہاں سے حاصل کر رہے ہیں، اور یہ ذرائع کتنے قابل اعتماد ہیں۔ کیا آپ بتا سکتے ہیں کہ معلومات قابل اعتماد اور معتبر ہے یا نہیں؟ نیچے دیے گئے نمبروں پر کلک کریں تاکہ کچھ چیزیں دیکھ سکیں جن پر غور کرنا چاہیے۔
+یہاں ایک قابل اعتماد خبری ذریعے کا جسم ہے۔
 [IMAGE: 9-reliable-news.png - Reliable News]
 1
-Where is it published?
-Check the website details to see if the site is published by a reputable organisation. Domains that include .gov (government) or .edu (educational/academic) typically provide reliable information.
+یہ کہاں شائع ہوا ہے؟
+ویب سائٹ کی تفصیلات چیک کریں تاکہ دیکھ سکیں کہ کیا سائٹ کسی معزز تنظیم نے شائع کی ہے۔ .gov (حکومت) یا .edu (تعلیمی/اکیڈمک) شامل کرنے والے ڈومینز عام طور پر قابل اعتماد معلومات فراہم کرتے ہیں۔
 2
-Who is the author?
-Credible sources will publish the author details. Is the author qualified to provide this information? Do they indicate their sources? You might even want to do your own online search to find out more about the author.
+مصنف کون ہے؟
+قابل اعتماد ذرائع مصنف کی تفصیلات شائع کریں گے۔ کیا مصنف اس معلومات کی فراہمی کے اہل ہے؟ کیا وہ اپنے ذرائع کی نشاندہی کرتے ہیں؟ آپ اپنے آن لائن سرچ کرکے مصنف کے بارے میں مزید معلومات حاصل کرنا چاہیں گے۔
 3
-Does it present fact or opinion?
-Look for sources that present verifiable facts, rather than someone’s opinion. Factual information should provide sources/references, and should be verifiable by searching yourself.
+کیا یہ حقیقت یا رائے پیش کرتا ہے؟
+ان ذرائع کو تلاش کریں جو تصدیق کرنے والے حقائق پیش کریں، کسی کی رائے کے بجائے۔ حقیقی معلومات میں ذرائع/حوالہ جات فراہم ہونے چاہئیں، اور خود سرچ کرکے تصدیق کے قابل ہونی چاہئیں۔
 4
-Do other credible sources agree?
-Consider doing your own search of the topic and compare information with trusted sources such as government websites and the World Health Organisation. Domains that include .gov (government) or .edu (educational/academic) typically provide reliable information.
+کیا دیگر قابل اعتماد ذرائع اتفاق کرتے ہیں؟
+اس موضوع کا اپنا سرچ کرنے اور حکومت کی ویب سائٹس اور عالمی صحت تنظیم جیسے قابل اعتماد ذرائع سے معلومات کا موازنہ کرنے پر غور کریں۔ .gov (حکومت) یا .edu (تعلیمی/اکیڈمک) شامل کرنے والے ڈومینز عام طور پر قابل اعتماد معلومات فراہم کرتے ہیں۔
 5
-When was it published?
-A reliable source will include a publication date. Is it recent? Is the website updated regularly.
-You can find a list of credible sources about COVID-19 on ourUseful Resourcespage.
-Does your teen have a learning difficulty, chronic health condition, or disability? Here are some extra tips:
-- Filter the information you give your teen based on what you think is appropriate for them, including language they will understand, and how the pandemic may affect them and their health condition.
-- Consider asking your teen’s health professional to help you develop ways to speak with your teen about the pandemic.
+یہ کب شائع ہوا؟
+ایک قابل اعتماد ذریعہ میں شائع ہونے کی تاریخ شامل ہوگی۔ کیا یہ حالیہ ہے؟ کیا ویب سائٹ باقاعدگی سے اپڈیٹ ہوتی ہے۔
+COVID-19 کے بارے میں قابل اعتماد ذرائع کی فہرست آپ کو ہمارے
+مفید وسائل
+والے صفحے پر مل سکتی ہے۔
+کیا آپ کے نوعمر بچے کو سیکھنے میں دشواری، دائمی صحت کی حالت، یا معذوری ہے؟ یہاں کچھ اضافی تجاویز ہیں:
+- اپنے نوعمر بچے کو دی گئی معلومات کو ان بنیادوں پر فلٹر کریں جو آپ کے خیال میں ان کے لیے مناسب ہیں، بشمول وہ زبان جسے وہ سمجھیں گے، اور وبا انھیں اور ان کی صحت کی حالت کو کیسے متاثر کر سکتی ہے۔
+- اپنے نوعمر بچے کے ساتھ وبا پر بات کرنے کے طریقے تیار کرنے میں آپ کی مدد کے لیے ان کے صحت کے پیشہ ور سے رابطہ کرنے پر غور کریں۔
