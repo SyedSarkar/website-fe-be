@@ -1,12 +1,11 @@
-
-H2 Putting it into practice
+H2 عمل میں لانا
 [IMAGE: goalSetting-e8a08381753c1f7e86217094826ab9a7.png]
 
-H6 Select a goal to focus on this week
-Please select one goal from the list below that you think is achievable for you over the next week. Your goals will be available on your dashboard, where you can mark them as complete. After completing your goal, you can return to the module to select additional goals if you wish.
-Click theicon to select your goal. Remove a goal with theicon.
-- Pick one self-care activity that you could do more of this week.Think about when and how you can fit this into your schedule. SeePrioritising self-care.
-- Have a chat with your teen about what worries them most about the pandemic.Focus on listening and understanding their concerns (seeHave the conversationsandCoping with worries and uncertainties).
-- Work with your teen to develop their ideal daily routine.Write this down and try to support your teen to stick to it for the week. SeeCreating healthy routines.
-- Reflect on the expectations you have of your teenager.Think about whether any of these need adjusting during the pandemic. SeeManaging your expectations.
-- Have a chat with your teen about where they are getting the latest information about the pandemic.Discuss with your teen how reliable this information is. See the tips onFinding the right information.
+H6 اس ہفتے پر توجہ مرکوز کرنے کے لیے ایک ہدف منتخب کریں
+براہ کرم درج ذیل فہرست سے ایک ہدف منتخب کریں جو آپ کو لگتا ہے کہ آپ اگلے ہفتے کے لیے قابل حصول ہے۔ آپ کے اہداف آپ کے ڈیش بورڈ پر دستیاب ہوں گے، جہاں آپ انھیں مکمل کے طور پر نشان زد کر سکتے ہیں۔ اپنے ہدف کو مکمل کرنے کے بعد، آپ اضافی اہداف منتخب کرنے کے لیے ماڈیول پر واپس آ سکتے ہیں اگر آپ چاہیں۔
+آئیکن پر کلک کریں تاکہ اپنا ہدف منتخب کریں۔ آئیکن کے ساتھ ایک ہدف ہٹائیں۔
+- اس ہفتے ایک خود کی دیکھ بھال کی سرگرمی منتخب کریں جسے آپ زیادہ کر سکتے ہیں۔سوچیں کہ کب اور کیسے آپ اسے اپنے شیڈول میں فٹ کر سکتے ہیں۔ دیکھیںخود کی دیکھ بھال کو ترجیح دینا۔
+- اپنے نوعمر بچے سے ایک گپ شپ کریں کہ وبا کے بارے میں انھیں سب سے زیادہ کیا فکر ہے۔سننے اور ان کی فکر مندیوں کو سمجھنے پر توجہ دیں (دیکھیںگفتگو کرنااورخدشات اور عدم یقینی صورتحال سے نمٹنا)۔
+- اپنے نوعمر بچے کے ساتھ ان کے مثالی یومیہ معمول کو تیار کرنے کے لیے کام کریں۔اسے لکھیں اور اس ہفتے اس پر عمل کرنے کے لیے اپنے نوعمر بچے کی حمایت کرنے کی کوشش کریں۔ دیکھیںصحت مند معمول بنانا۔
+- اپنے نوعمر بچے سے متعلق اپنی توقعات پر غور کریں۔سوچیں کہ کیا ان میں سے کوئی وبا کے دوران ایڈجسٹ کرنے کی ضرورت ہے۔ دیکھیںاپنی توقعات کا انتظام کرنا۔
+- اپنے نوعمر بچے سے ایک گپ شپ کریں کہ وہ وبا کے بارے میں تازہ ترین معلومات کہاں سے حاصل کر رہے ہیں۔اپنے نوعمر بچے کے ساتھ بات چیت کریں کہ یہ معلومات کتنی قابل اعتماد ہے۔ دیکھیںصحیح معلومات تلاش کرنے پر تجاویز۔
