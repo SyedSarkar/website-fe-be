@@ -1,11 +1,10 @@
-
-H1 Quiz
-QUESTION 01: Even though my child is now a teenager, I should remain involved in their life.
-True
-False
-Don't Know
-QUESTION 02: Who my teenager's friends are is none of my business.
-QUESTION 03: Encouraging independence in my teenager is important.
-QUESTION 04: I should be putting my teenager's dirty clothes in the laundry basket.
-QUESTION 05: To help my teenager's confidence, I should encourage them to try a variety of activities.
+H1 کوئز
+سوال 01: اگرچہ میرا بچہ اب نوعمر ہے، مجھے ان کی زندگی میں شامل رہنا چاہیے۔
+صحیح
+غلط
+نہیں جانتے
+سوال 02: میرے نوعمر بچے کے دوست کون ہیں یہ میرے کام کی بات نہیں ہے۔
+سوال 03: اپنے نوعمر بچے میں آزادی کی حوصلہ افزائی کرنا اہم ہے۔
+سوال 04: مجھے اپنے نوعمر بچے کے گندے کپڑے لانڈری باسکٹ میں ڈالنے چاہئیں۔
+سوال 05: اپنے نوعمر بچے کے اعتماد کو بڑھانے کے لیے، مجھے انہیں مختلف سرگرمیوں کی آزمائش کرنے کی حوصلہ افزائی کرنی چاہیے۔
 [IMAGE: 51.1-01.svg - thinking woman]
