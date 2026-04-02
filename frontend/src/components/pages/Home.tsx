@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
+import { useLanguage } from '../../hooks/useLanguage'
 import { 
   Heart, 
   Users, 
   BookOpen, 
-  Star, 
   ArrowRight,
   CheckCircle,
   Shield,
@@ -14,48 +14,28 @@ import Header from '../navigation/Header'
 
 export default function Home() {
   const { isAuthenticated, user } = useAuth()
+  const { t } = useLanguage()
 
   const features = [
     {
       icon: Heart,
-      title: 'Strengthen Relationships',
-      description: 'Build stronger bonds with your children through evidence-based parenting strategies.'
+      title: t('strengthen_relationships'),
+      description: t('strengthen_desc')
     },
     {
       icon: Users,
-      title: 'Expert Guidance',
-      description: 'Access professional advice and practical tools from child development specialists.'
+      title: t('expert_guidance'),
+      description: t('expert_desc')
     },
     {
       icon: BookOpen,
-      title: 'Learn at Your Pace',
-      description: 'Self-paced modules designed to fit into your busy parenting schedule.'
+      title: t('learn_at_pace'),
+      description: t('learn_desc')
     },
     {
       icon: Shield,
-      title: 'Proven Methods',
-      description: 'Techniques backed by research to help your family thrive.'
-    }
-  ]
-
-  const testimonials = [
-    {
-      name: 'Sarah M.',
-      role: 'Mother of 2',
-      content: 'This program transformed how I approach parenting. My relationship with my kids has never been better.',
-      rating: 5
-    },
-    {
-      name: 'Michael R.',
-      role: 'Father of 3',
-      content: 'The practical tools and strategies helped me navigate the challenges of parenting with confidence.',
-      rating: 5
-    },
-    {
-      name: 'Jennifer L.',
-      role: 'Single Parent',
-      content: 'Finally, a program that understands real parenting challenges. Highly recommended!',
-      rating: 5
+      title: t('proven_methods'),
+      description: t('proven_desc')
     }
   ]
 
@@ -75,18 +55,18 @@ export default function Home() {
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white text-sm font-medium mb-8">
             <Sparkles className="w-4 h-4 mr-2" />
-            Trusted by 10,000+ Parents Worldwide
+            {t('trusted_by_parents')}
           </div>
           
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-            Partners in
+            {t('partners_in')}
             <span className="block bg-gradient-to-r from-yellow-300 to-orange-400 bg-clip-text text-transparent">
-              Parenting
+              {t('parenting_title')}
             </span>
           </h1>
           
           <p className="text-xl sm:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Empowering families with evidence-based strategies, practical tools, and expert guidance to build stronger, healthier relationships.
+            {t('hero_description')}
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -95,7 +75,7 @@ export default function Home() {
                 to={user?.role === 'admin' ? '/admin' : '/user-dashboard'}
                 className="group px-8 py-4 bg-white text-teal-600 rounded-xl font-semibold text-lg hover:bg-gray-100 transition-all transform hover:scale-105 flex items-center"
               >
-                Go to Dashboard
+                {t('go_to_dashboard')}
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Link>
             ) : (
@@ -104,14 +84,14 @@ export default function Home() {
                   to="/register"
                   className="group px-8 py-4 bg-white text-teal-600 rounded-xl font-semibold text-lg hover:bg-gray-100 transition-all transform hover:scale-105 flex items-center"
                 >
-                  Start Your Journey
+                  {t('start_journey')}
                   <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link
                   to="/login"
                   className="px-8 py-4 bg-white/20 backdrop-blur-sm text-white rounded-xl font-semibold text-lg hover:bg-white/30 transition-all"
                 >
-                  Sign In
+                  {t('sign_in')}
                 </Link>
               </>
             )}
@@ -121,15 +101,15 @@ export default function Home() {
           <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-2xl mx-auto">
             <div className="text-center">
               <div className="text-4xl font-bold text-white">10K+</div>
-              <div className="text-white/80">Happy Families</div>
+              <div className="text-white/80">{t('happy_families')}</div>
             </div>
             <div className="text-center">
               <div className="text-4xl font-bold text-white">50+</div>
-              <div className="text-white/80">Expert Modules</div>
+              <div className="text-white/80">{t('expert_modules')}</div>
             </div>
             <div className="text-center">
               <div className="text-4xl font-bold text-white">95%</div>
-              <div className="text-white/80">Success Rate</div>
+              <div className="text-white/80">{t('success_rate')}</div>
             </div>
           </div>
         </div>
@@ -147,10 +127,10 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Why Choose Partners in Parenting?
+              {t('why_choose')}
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Comprehensive support designed to help your family thrive at every stage.
+              {t('comprehensive_support')}
             </p>
           </div>
 
@@ -176,10 +156,10 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              How It Works
+              {t('how_it_works')}
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Simple steps to transform your parenting journey.
+              {t('simple_steps')}
             </p>
           </div>
 
@@ -188,8 +168,8 @@ export default function Home() {
               <div className="w-20 h-20 bg-gradient-to-br from-teal-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold">
                 1
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Complete Assessments</h3>
-              <p className="text-gray-600">Take our comprehensive parenting assessments to understand your strengths and areas for growth.</p>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">{t('step1_title')}</h3>
+              <p className="text-gray-600">{t('step1_desc')}</p>
               {/* Connector */}
               <div className="hidden md:block absolute top-10 left-[60%] w-full h-0.5 bg-gradient-to-r from-teal-500 to-blue-600"></div>
             </div>
@@ -198,8 +178,8 @@ export default function Home() {
               <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold">
                 2
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Access Modules</h3>
-              <p className="text-gray-600">Explore personalized learning modules designed specifically for your family's needs.</p>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">{t('step2_title')}</h3>
+              <p className="text-gray-600">{t('step2_desc')}</p>
               {/* Connector */}
               <div className="hidden md:block absolute top-10 left-[60%] w-full h-0.5 bg-gradient-to-r from-blue-500 to-purple-600"></div>
             </div>
@@ -208,8 +188,8 @@ export default function Home() {
               <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold">
                 3
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Transform Family Life</h3>
-              <p className="text-gray-600">Apply proven strategies and watch your family relationships flourish.</p>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">{t('step3_title')}</h3>
+              <p className="text-gray-600">{t('step3_desc')}</p>
             </div>
           </div>
         </div>
@@ -221,21 +201,14 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
               <h2 className="text-4xl font-bold text-white mb-6">
-                What You'll Gain
+                {t('what_you_gain')}
               </h2>
               <p className="text-xl text-white/90 mb-8">
-                Our program provides you with practical tools and knowledge to create a nurturing family environment.
+                {t('program_provides')}
               </p>
               
               <div className="space-y-4">
-                {[
-                  'Improved communication with your children',
-                  'Effective discipline strategies',
-                  'Stress management techniques',
-                  'Better understanding of child development',
-                  'Stronger family bonds',
-                  'Confidence in your parenting decisions'
-                ].map((benefit, index) => (
+                {[t('benefit1'), t('benefit2'), t('benefit3'), t('benefit4'), t('benefit5'), t('benefit6')].map((benefit, index) => (
                   <div key={index} className="flex items-center text-white">
                     <CheckCircle className="w-6 h-6 mr-3 text-yellow-300 flex-shrink-0" />
                     <span className="text-lg">{benefit}</span>
@@ -248,58 +221,24 @@ export default function Home() {
               <div className="space-y-4">
                 <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center">
                   <div className="text-3xl font-bold text-white mb-2">4</div>
-                  <div className="text-white/80">Core Assessments</div>
+                  <div className="text-white/80">{t('core_assessments')}</div>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center">
                   <div className="text-3xl font-bold text-white mb-2">12+</div>
-                  <div className="text-white/80">Learning Modules</div>
+                  <div className="text-white/80">{t('learning_modules')}</div>
                 </div>
               </div>
               <div className="space-y-4 pt-8">
                 <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center">
                   <div className="text-3xl font-bold text-white mb-2">24/7</div>
-                  <div className="text-white/80">Resource Access</div>
+                  <div className="text-white/80">{t('resource_access')}</div>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center">
                   <div className="text-3xl font-bold text-white mb-2">100%</div>
-                  <div className="text-white/80">Satisfaction</div>
+                  <div className="text-white/80">{t('satisfaction')}</div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-24 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              What Parents Say
-            </h2>
-            <p className="text-xl text-gray-600">
-              Real stories from families who transformed their relationships.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-lg transition-shadow"
-              >
-                <div className="flex mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
-                  ))}
-                </div>
-                <p className="text-gray-700 mb-6 italic">"{testimonial.content}"</p>
-                <div>
-                  <p className="font-bold text-gray-900">{testimonial.name}</p>
-                  <p className="text-sm text-gray-500">{testimonial.role}</p>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -308,10 +247,10 @@ export default function Home() {
       <section className="py-24 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl font-bold text-gray-900 mb-6">
-            Ready to Transform Your Parenting Journey?
+            {t('ready_to_transform')}
           </h2>
           <p className="text-xl text-gray-600 mb-8">
-            Join thousands of parents who have already discovered the power of evidence-based parenting strategies.
+            {t('join_parents')}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             {isAuthenticated ? (
@@ -319,7 +258,7 @@ export default function Home() {
                 to={user?.role === 'admin' ? '/admin' : '/user-dashboard'}
                 className="px-8 py-4 bg-gradient-to-r from-teal-600 to-blue-600 text-white rounded-xl font-semibold text-lg hover:from-teal-700 hover:to-blue-700 transition-all transform hover:scale-105"
               >
-                Continue Your Journey
+                {t('continue_journey')}
               </Link>
             ) : (
               <>
@@ -327,13 +266,13 @@ export default function Home() {
                   to="/register"
                   className="px-8 py-4 bg-gradient-to-r from-teal-600 to-blue-600 text-white rounded-xl font-semibold text-lg hover:from-teal-700 hover:to-blue-700 transition-all transform hover:scale-105"
                 >
-                  Get Started Free
+                  {t('get_started_free')}
                 </Link>
                 <Link
                   to="/contact"
                   className="px-8 py-4 bg-gray-100 text-gray-700 rounded-xl font-semibold text-lg hover:bg-gray-200 transition-all"
                 >
-                  Learn More
+                  {t('learn_more')}
                 </Link>
               </>
             )}
@@ -353,36 +292,36 @@ export default function Home() {
                 <span className="font-bold text-xl">Partners in Parenting</span>
               </div>
               <p className="text-gray-400 max-w-sm">
-                Empowering families with evidence-based strategies and expert guidance since 2024.
+                {t('empowering_families')}
               </p>
             </div>
             <div>
-              <h4 className="font-bold mb-4">Quick Links</h4>
+              <h4 className="font-bold mb-4">{t('quick_links')}</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><Link to="/" className="hover:text-white transition-colors">Home</Link></li>
-                <li><Link to="/resources" className="hover:text-white transition-colors">Resources</Link></li>
-                <li><Link to="/contact" className="hover:text-white transition-colors">Contact Us</Link></li>
+                <li><Link to="/" className="hover:text-white transition-colors">{t('home')}</Link></li>
+                <li><Link to="/resources" className="hover:text-white transition-colors">{t('resources')}</Link></li>
+                <li><Link to="/contact" className="hover:text-white transition-colors">{t('contact_us')}</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-bold mb-4">Account</h4>
+              <h4 className="font-bold mb-4">{t('account')}</h4>
               <ul className="space-y-2 text-gray-400">
                 {isAuthenticated ? (
                   <>
-                    <li><Link to="/profile" className="hover:text-white transition-colors">My Profile</Link></li>
-                    <li><Link to="/user-dashboard" className="hover:text-white transition-colors">Dashboard</Link></li>
+                    <li><Link to="/profile" className="hover:text-white transition-colors">{t('my_profile')}</Link></li>
+                    <li><Link to="/user-dashboard" className="hover:text-white transition-colors">{t('dashboard')}</Link></li>
                   </>
                 ) : (
                   <>
-                    <li><Link to="/login" className="hover:text-white transition-colors">Sign In</Link></li>
-                    <li><Link to="/register" className="hover:text-white transition-colors">Get Started</Link></li>
+                    <li><Link to="/login" className="hover:text-white transition-colors">{t('sign_in')}</Link></li>
+                    <li><Link to="/register" className="hover:text-white transition-colors">{t('get_started')}</Link></li>
                   </>
                 )}
               </ul>
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 text-center text-gray-500">
-            <p>&copy; 2024 Partners in Parenting. All rights reserved.</p>
+            <p>&copy; 2024 Partners in Parenting. {t('all_rights_reserved')}</p>
           </div>
         </div>
       </footer>

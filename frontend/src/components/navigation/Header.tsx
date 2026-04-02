@@ -1,5 +1,6 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
+import { useLanguage } from '../../hooks/useLanguage'
 import { useState, useEffect } from 'react'
 import LanguageSwitcher from '../LanguageSwitcher'
 import { 
@@ -20,6 +21,7 @@ interface HeaderProps {
 
 export default function Header({ transparent = false }: HeaderProps) {
   const { user, logout, isAuthenticated } = useAuth()
+  const { t } = useLanguage()
   const navigate = useNavigate()
   const location = useLocation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -49,9 +51,9 @@ export default function Header({ transparent = false }: HeaderProps) {
   }
 
   const navItems = [
-    { path: '/', label: 'Home', icon: Home },
-    { path: '/resources', label: 'Resources', icon: BookOpen },
-    { path: '/contact', label: 'Contact Us', icon: Phone },
+    { path: '/', label: t('home'), icon: Home },
+    { path: '/resources', label: t('resources'), icon: BookOpen },
+    { path: '/contact', label: t('contact_us'), icon: Phone },
   ]
 
   const bgClass = transparent && !scrolled 
@@ -130,7 +132,7 @@ export default function Header({ transparent = false }: HeaderProps) {
                       className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors"
                     >
                       <User className="w-4 h-4 mr-3" />
-                      My Profile
+                      {t('my_profile')}
                     </Link>
                     {user?.role !== 'admin' && (
                       <Link
@@ -139,7 +141,7 @@ export default function Header({ transparent = false }: HeaderProps) {
                         className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors"
                       >
                         <Home className="w-4 h-4 mr-3" />
-                        Dashboard
+                        {t('dashboard')}
                       </Link>
                     )}
                     {user?.role === 'admin' && (
@@ -149,7 +151,7 @@ export default function Header({ transparent = false }: HeaderProps) {
                         className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors"
                       >
                         <Home className="w-4 h-4 mr-3" />
-                        Admin Dashboard
+                        {t('admin_dashboard')}
                       </Link>
                     )}
                     <div className="border-t border-gray-100 mt-2 pt-2">
@@ -158,7 +160,7 @@ export default function Header({ transparent = false }: HeaderProps) {
                         className="flex items-center w-full px-4 py-2 text-red-600 hover:bg-red-50 transition-colors"
                       >
                         <LogOut className="w-4 h-4 mr-3" />
-                        Sign Out
+                        {t('sign_out')}
                       </button>
                     </div>
                   </div>
@@ -174,13 +176,13 @@ export default function Header({ transparent = false }: HeaderProps) {
                       : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                   }`}
                 >
-                  Sign In
+                  {t('sign_in')}
                 </Link>
                 <Link
                   to="/register"
                   className="px-4 py-2 bg-gradient-to-r from-teal-600 to-blue-600 text-white rounded-lg font-medium hover:from-teal-700 hover:to-blue-700 transition-all"
                 >
-                  Get Started
+                  {t('get_started')}
                 </Link>
               </div>
             )}
@@ -229,14 +231,14 @@ export default function Header({ transparent = false }: HeaderProps) {
                     }`}
                   >
                     <User className="w-5 h-5 mr-3" />
-                    My Profile
+                    {t('my_profile')}
                   </Link>
                   <button
                     onClick={handleLogout}
                     className="flex items-center w-full px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg font-medium transition-colors"
                   >
                     <LogOut className="w-5 h-5 mr-3" />
-                    Sign Out
+                    {t('sign_out')}
                   </button>
                 </>
               ) : (
@@ -247,14 +249,14 @@ export default function Header({ transparent = false }: HeaderProps) {
                     className="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg font-medium transition-colors"
                   >
                     <LogIn className="w-5 h-5 mr-3" />
-                    Sign In
+                    {t('sign_in')}
                   </Link>
                   <Link
                     to="/register"
                     onClick={() => setMobileMenuOpen(false)}
                     className="flex items-center px-4 py-3 bg-gradient-to-r from-teal-600 to-blue-600 text-white rounded-lg font-medium"
                   >
-                    Get Started
+                    {t('get_started')}
                   </Link>
                 </>
               )}

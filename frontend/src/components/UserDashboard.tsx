@@ -520,7 +520,9 @@ export default function UserDashboard() {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="w-full max-w-xs">
                             <div className="flex items-center justify-between mb-1">
-                              <span className="text-sm text-gray-900">{module.percentage}%</span>
+                              <span className="text-sm text-gray-900">
+                                {Math.min(100, Math.round((module.completedPages.length / module.totalPages) * 100))}%
+                              </span>
                               <span className="text-xs text-gray-500">
                                 {module.completedPages.length}/{module.totalPages}
                               </span>
@@ -528,7 +530,7 @@ export default function UserDashboard() {
                             <div className="w-full bg-gray-200 rounded-full h-2">
                               <div 
                                 className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                                style={{ width: `${Math.min(100, module.percentage || 0)}%` }}
+                                style={{ width: `${Math.min(100, Math.round((module.completedPages.length / module.totalPages) * 100))}%` }}
                               ></div>
                             </div>
                           </div>
