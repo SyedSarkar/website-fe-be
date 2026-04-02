@@ -797,4 +797,334 @@ router.get('/export/responses', async (req, res) => {
   }
 });
 
+// ========== MODULE CONTENT ADMIN ENDPOINTS ==========
+
+// Get all module responses for admin
+router.get('/module-responses', async (req, res) => {
+  try {
+    const { userId, moduleSlug, page = 1, limit = 50 } = req.query;
+    const skip = (page - 1) * limit;
+
+    let query = {};
+    if (userId) query.user = userId;
+    if (moduleSlug) query.moduleSlug = moduleSlug;
+
+    const ModuleResponse = (await import('../models/ModuleResponse.js')).default;
+    
+    const responses = await ModuleResponse.find(query)
+      .populate('user', 'name email')
+      .sort({ completedAt: -1 })
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    const total = await ModuleResponse.countDocuments(query);
+
+    res.json({
+      status: 'success',
+      data: {
+        responses,
+        pagination: {
+          current: parseInt(page),
+          total: Math.ceil(total / limit),
+          count: total
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching module responses:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to fetch module responses'
+    });
+  }
+});
+
+// Get all goals for admin
+router.get('/goals', async (req, res) => {
+  try {
+    const { userId, moduleSlug, status, page = 1, limit = 50 } = req.query;
+    const skip = (page - 1) * limit;
+
+    let query = {};
+    if (userId) query.user = userId;
+    if (moduleSlug) query.moduleSlug = moduleSlug;
+    if (status) query.status = status;
+
+    const Goal = (await import('../models/Goal.js')).default;
+    
+    const goals = await Goal.find(query)
+      .populate('user', 'name email')
+      .sort({ selectedAt: -1 })
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    const total = await Goal.countDocuments(query);
+
+    res.json({
+      status: 'success',
+      data: {
+        goals,
+        pagination: {
+          current: parseInt(page),
+          total: Math.ceil(total / limit),
+          count: total
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching goals:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to fetch goals'
+    });
+  }
+});
+
+// Get all quiz responses for admin
+router.get('/quiz-responses', async (req, res) => {
+  try {
+    const { userId, moduleSlug, page = 1, limit = 50 } = req.query;
+    const skip = (page - 1) * limit;
+
+    let query = {};
+    if (userId) query.user = userId;
+    if (moduleSlug) query.moduleSlug = moduleSlug;
+
+    const QuizResponse = (await import('../models/QuizResponse.js')).default;
+    
+    const responses = await QuizResponse.find(query)
+      .populate('user', 'name email')
+      .sort({ completedAt: -1 })
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    const total = await QuizResponse.countDocuments(query);
+
+    res.json({
+      status: 'success',
+      data: {
+        responses,
+        pagination: {
+          current: parseInt(page),
+          total: Math.ceil(total / limit),
+          count: total
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching quiz responses:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to fetch quiz responses'
+    });
+  }
+});
+
+// Get comprehensive user course details
+router.get('/user-course-details/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const ModuleResponse = (await import('../models/ModuleResponse.js')).default;
+    const Goal = (await import('../models/Goal.js')).default;
+    const QuizResponse = (await import('../models/QuizResponse.js')).default;
+    const ModuleEnrollment = (await import('../models/ModuleEnrollment.js')).default;
+
+    // Get all data for this user
+    const [moduleResponses, goals, quizResponses, enrollments] = await Promise.all([
+      ModuleResponse.find({ user: userId }).sort({ completedAt: -1 }),
+      Goal.find({ user: userId }).sort({ selectedAt: -1 }),
+      QuizResponse.find({ user: userId }).sort({ completedAt: -1 }),
+      ModuleEnrollment.find({ user: userId }).sort({ lastAccessed: -1 })
+    ]);
+
+    // Group by module
+    const moduleDetails = {};
+    
+    enrollments.forEach(enrollment => {
+      moduleDetails[enrollment.moduleSlug] = {
+        moduleName: enrollment.moduleName,
+        status: enrollment.status,
+        progress: enrollment.progress,
+        responses: [],
+        goals: [],
+        quizzes: [],
+        lastAccessed: enrollment.lastAccessed
+      };
+    });
+
+    // Add module responses
+    moduleResponses.forEach(response => {
+      if (!moduleDetails[response.moduleSlug]) {
+        moduleDetails[response.moduleSlug] = {
+          moduleName: response.moduleName,
+          responses: [],
+          goals: [],
+          quizzes: []
+        };
+      }
+      moduleDetails[response.moduleSlug].responses.push({
+        pageSlug: response.pageSlug,
+        responseType: response.responseType,
+        responses: response.responses,
+        score: response.score,
+        completedAt: response.completedAt
+      });
+    });
+
+    // Add goals
+    goals.forEach(goal => {
+      if (!moduleDetails[goal.moduleSlug]) {
+        moduleDetails[goal.moduleSlug] = {
+          moduleName: goal.moduleName,
+          responses: [],
+          goals: [],
+          quizzes: []
+        };
+      }
+      moduleDetails[goal.moduleSlug].goals.push({
+        goalText: goal.goalText,
+        goalId: goal.goalId,
+        status: goal.status,
+        selectedAt: goal.selectedAt,
+        completedAt: goal.completedAt
+      });
+    });
+
+    // Add quiz responses
+    quizResponses.forEach(quiz => {
+      if (!moduleDetails[quiz.moduleSlug]) {
+        moduleDetails[quiz.moduleSlug] = {
+          moduleName: quiz.moduleName,
+          responses: [],
+          goals: [],
+          quizzes: []
+        };
+      }
+      moduleDetails[quiz.moduleSlug].quizzes.push({
+        quizId: quiz.quizId,
+        answers: quiz.answers,
+        score: quiz.score,
+        totalQuestions: quiz.totalQuestions,
+        completedAt: quiz.completedAt
+      });
+    });
+
+    res.json({
+      status: 'success',
+      data: moduleDetails
+    });
+  } catch (error) {
+    console.error('Error fetching user course details:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to fetch user course details'
+    });
+  }
+});
+
+// Export module responses to CSV
+router.get('/export/module-responses', async (req, res) => {
+  try {
+    const ModuleResponse = (await import('../models/ModuleResponse.js')).default;
+    
+    const responses = await ModuleResponse.find()
+      .populate('user', 'name email')
+      .sort({ completedAt: -1 });
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=module-responses.csv');
+
+    const csv = [
+      ['User Name', 'User Email', 'Module', 'Page', 'Response Type', 'Responses', 'Score', 'Completed At'].join(','),
+      ...responses.map(response => [
+        response.user?.name || 'Unknown',
+        response.user?.email || 'Unknown',
+        response.moduleSlug,
+        response.pageSlug,
+        response.responseType,
+        JSON.stringify(response.responses).replace(/,/g, ';'),
+        response.score || 'N/A',
+        response.completedAt
+      ].join(','))
+    ].join('\n');
+
+    res.send(csv);
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to export module responses'
+    });
+  }
+});
+
+// Export goals to CSV
+router.get('/export/goals', async (req, res) => {
+  try {
+    const Goal = (await import('../models/Goal.js')).default;
+    
+    const goals = await Goal.find()
+      .populate('user', 'name email')
+      .sort({ selectedAt: -1 });
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=goals.csv');
+
+    const csv = [
+      ['User Name', 'User Email', 'Module', 'Goal Text', 'Status', 'Selected At', 'Completed At'].join(','),
+      ...goals.map(goal => [
+        goal.user?.name || 'Unknown',
+        goal.user?.email || 'Unknown',
+        goal.moduleSlug,
+        goal.goalText,
+        goal.status,
+        goal.selectedAt,
+        goal.completedAt || 'Not completed'
+      ].join(','))
+    ].join('\n');
+
+    res.send(csv);
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to export goals'
+    });
+  }
+});
+
+// Export quiz responses to CSV
+router.get('/export/quiz-responses', async (req, res) => {
+  try {
+    const QuizResponse = (await import('../models/QuizResponse.js')).default;
+    
+    const responses = await QuizResponse.find()
+      .populate('user', 'name email')
+      .sort({ completedAt: -1 });
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=quiz-responses.csv');
+
+    const csv = [
+      ['User Name', 'User Email', 'Module', 'Quiz ID', 'Answers', 'Score', 'Total Questions', 'Completed At'].join(','),
+      ...responses.map(response => [
+        response.user?.name || 'Unknown',
+        response.user?.email || 'Unknown',
+        response.moduleSlug,
+        response.quizId,
+        JSON.stringify(response.answers).replace(/,/g, ';'),
+        response.score || 'N/A',
+        response.totalQuestions,
+        response.completedAt
+      ].join(','))
+    ].join('\n');
+
+    res.send(csv);
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to export quiz responses'
+    });
+  }
+});
+
 export default router;
