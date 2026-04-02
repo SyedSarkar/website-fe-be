@@ -30,46 +30,10 @@ export default function Sidebar({ modules, onClose }: SidebarProps) {
   )
   const [moduleProgress, setModuleProgress] = useState<ModuleProgress[]>([])
 
-  // Don't show module navigation for admin users
-  if (user?.role === 'admin') {
-    return (
-      <div className="h-full flex flex-col bg-white">
-        <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <BookOpen className="w-6 h-6 text-teal-600" />
-            <h1 className="font-bold text-lg text-teal-800">Partners in Parenting</h1>
-          </div>
-          <button
-            onClick={onClose}
-            className="lg:hidden p-1 rounded-md hover:bg-gray-100"
-          >
-            <X className="w-5 h-5 text-gray-500" />
-          </button>
-        </div>
-        <div className="flex-1 flex items-center justify-center p-8">
-          <div className="text-center">
-            <p className="text-gray-500 mb-4">Admin users don't need to access course modules.</p>
-            <Link
-              to="/admin"
-              className="text-teal-600 hover:text-teal-700 font-medium"
-              onClick={onClose}
-            >
-              Go to Admin Dashboard
-            </Link>
-          </div>
-        </div>
-        <div className="p-4 border-t border-gray-200 text-xs text-gray-500">
-          <p>Partners in Parenting</p>
-          <p>Supporting families together</p>
-        </div>
-      </div>
-    )
-  }
-
+  // Load progress from backend
   useEffect(() => {
     if (!user) return
     
-    // Load progress from backend (user-specific) instead of localStorage
     const fetchProgress = async () => {
       try {
         const response = await api.get('/modules/my-progress')
@@ -89,13 +53,11 @@ export default function Sidebar({ modules, onClose }: SidebarProps) {
     }
     
     fetchProgress()
-    // Refresh progress every 30 seconds
     const interval = setInterval(fetchProgress, 30000)
     return () => clearInterval(interval)
   }, [user, location.pathname])
 
   const getFilename = (pageSlug: string) => {
-    // Simply return the slug with .txt extension
     return `${pageSlug}.txt`
   }
 
@@ -123,7 +85,44 @@ export default function Sidebar({ modules, onClose }: SidebarProps) {
     const module = modules.find(m => m.slug === moduleSlug)
     if (!progress || !module) return 0
     const percentage = Math.round((progress.completedPages.length / module.pages.length) * 100)
-    return isNaN(percentage) ? 0 : Math.min(percentage, 100) // Cap at 100%
+    return isNaN(percentage) ? 0 : Math.min(percentage, 100)
+  }
+
+  // Don't show module navigation for admin users
+  if (user?.role === 'admin') {
+    return (
+      <div className="h-full flex flex-col bg-white">
+        <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <BookOpen className="w-6 h-6 text-teal-600" />
+            <h1 className="font-bold text-lg text-teal-800">Partners in Parenting</h1>
+          </div>
+          <button
+            onClick={onClose}
+            className="lg:hidden p-1 rounded-md hover:bg-gray-100"
+            title="Close sidebar"
+          >
+            <X className="w-5 h-5 text-gray-500" />
+          </button>
+        </div>
+        <div className="flex-1 flex items-center justify-center p-8">
+          <div className="text-center">
+            <p className="text-gray-500 mb-4">Admin users don't need to access course modules.</p>
+            <Link
+              to="/admin"
+              className="text-teal-600 hover:text-teal-700 font-medium"
+              onClick={onClose}
+            >
+              Go to Admin Dashboard
+            </Link>
+          </div>
+        </div>
+        <div className="p-4 border-t border-gray-200 text-xs text-gray-500">
+          <p>Partners in Parenting</p>
+          <p>Supporting families together</p>
+        </div>
+      </div>
+    )
   }
 
   return (
