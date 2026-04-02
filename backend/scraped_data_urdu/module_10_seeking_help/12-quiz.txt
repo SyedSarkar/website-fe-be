@@ -1,11 +1,10 @@
-
-H1 Quiz
-QUESTION 01: I should be concerned if my teenager has stopped doing things that they used to enjoy.
-True
-False
-Don't Know
-QUESTION 02: I should avoid talking with my teenager about any mental health difficulties they may be having, to give them privacy.
-QUESTION 03: I should try to understand whether the change in my teenager’s mood or behaviour is due to a temporary situation or is an ongoing problem.
-QUESTION 04: It is best to wait until my teenager’s symptoms are severe before seeking professional help.
-QUESTION 05: If my teenager has previously had depression, I should encourage them to reward themselves for reaching small goals.
+H1 کوئز
+سوال 01: مجھے فکر ہونی چاہیے اگر میرا نوعمر بچہ انہیں چیزوں کو کرنا چھوڑ دے جو وہ لطف اندوز ہوتے تھے۔
+صحیح
+غلط
+نہیں جانتے
+سوال 02: مجھے اپنے نوعمر بچے سے کسی بھی دماغی صحت کی مشکلات کے بارے میں بات کرنے سے گریز کرنا چاہیے، انھیں رازداری دینے کے لیے۔
+سوال 03: مجھے کوشش کرنی چاہیے کہ سمجھ سکوں کہ آیا میرے نوعمر بچے کے موڈ یا رویے میں تبدیلی کسی عارضی صورت حال کی وجہ سے ہے یا جاری مسئلہ ہے۔
+سوال 04: پیشہ ورانہ مدد حاصل کرنے سے پہلے تک انتظار کرنا بہتر ہے جب تک میرے نوعمر بچے کی علامات شدید نہ ہوں۔
+سوال 05: اگر میرا نوعمر بچہ پہلے ہی ڈپریشن کا شکار رہا ہو، تو مجھے انھیں چھوٹے اہداف تک پہنچنے پر خود انعام دینے کی حوصلہ افزائی کرنی چاہیے۔
 [IMAGE: Oriental_quiz.svg - thinking man]
