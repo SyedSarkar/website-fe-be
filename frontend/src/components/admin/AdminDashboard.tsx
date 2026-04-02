@@ -149,6 +149,41 @@ interface PerformanceData {
     }
     lastAccessed: string
   }>
+  courseDetails?: UserCourseDetails
+}
+
+interface UserCourseDetails {
+  [moduleSlug: string]: {
+    moduleName: string
+    status?: string
+    progress?: {
+      percentage: number
+      completedPages: string[]
+      totalPages: number
+    }
+    responses: Array<{
+      pageSlug: string
+      responseType: string
+      responses: any
+      score?: number
+      completedAt: string
+    }>
+    goals: Array<{
+      goalText: string
+      goalId: string
+      status: string
+      selectedAt: string
+      completedAt?: string
+    }>
+    quizzes: Array<{
+      quizId: string
+      answers: any
+      score?: number
+      totalQuestions: number
+      completedAt: string
+    }>
+    lastAccessed?: string
+  }
 }
 
 interface UserPerformanceData {
@@ -237,9 +272,20 @@ export default function AdminDashboard() {
   const fetchUserPerformance = async (userId: string) => {
     console.log('Fetching performance for user:', userId);
     try {
-      const response = await api.get(`/admin/users/${userId}/performance`);
-      console.log('Performance response:', response.data);
-      setPerformanceData(response.data.data);
+      const [performanceResponse, courseDetailsResponse] = await Promise.all([
+        api.get(`/admin/users/${userId}/performance`),
+        api.get(`/admin/user-course-details/${userId}`)
+      ]);
+      
+      console.log('Performance response:', performanceResponse.data);
+      console.log('Course details response:', courseDetailsResponse.data);
+      
+      const combinedData = {
+        ...performanceResponse.data.data,
+        courseDetails: courseDetailsResponse.data.data
+      };
+      
+      setPerformanceData(combinedData);
       setShowPerformanceDetails(true);
     } catch (error) {
       console.error('Failed to fetch user performance:', error);
@@ -977,7 +1023,7 @@ export default function AdminDashboard() {
                                       {userPerf.performance.inProgressModulesDetails.slice(0, 2).map((module, idx) => (
                                         <div key={idx} className="flex items-center justify-between">
                                           <span className="truncate max-w-24">{module.moduleName}</span>
-                                          <span className="text-gray-400">{module.progress}%</span>
+                                          <span className="text-gray-400">{Math.min(100, module.progress || 0)}%</span>
                                         </div>
                                       ))}
                                       {userPerf.performance.inProgressModulesDetails.length > 2 && (
@@ -997,9 +1043,6 @@ export default function AdminDashboard() {
                                 <div className="flex gap-2">
                                   <button
                                     onClick={() => {
-                                      console.log('Button clicked, userPerf:', userPerf);
-                                      console.log('userPerf._id:', userPerf?._id);
-                                      alert(`User ID: ${userPerf?._id}, Name: ${userPerf?.name}`);
                                       if (userPerf?._id) {
                                         fetchUserPerformance(userPerf._id);
                                       }
@@ -1356,13 +1399,13 @@ export default function AdminDashboard() {
                         <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
                           <div 
                             className="bg-teal-500 h-3 rounded-full transition-all duration-300"
-                            style={{ width: `${enrollment.progress?.percentage || 0}%` }}
+                            style={{ width: `${Math.min(100, enrollment.progress?.percentage || 0)}%` }}
                           ></div>
                         </div>
                         
                         <div className="flex justify-between items-center text-sm">
                           <span className="text-gray-600">
-                            {enrollment.progress?.percentage || 0}% complete
+                            {Math.min(100, enrollment.progress?.percentage || 0)}% complete
                           </span>
                           <span className="text-gray-500">
                             {enrollment.progress?.completedPages?.length || 0} / {enrollment.progress?.totalPages || 0} pages
@@ -1386,6 +1429,77 @@ export default function AdminDashboard() {
                             ? new Date(enrollment.lastAccessed).toLocaleString() 
                             : 'Never'}
                         </p>
+                        
+                        {/* Module Scale Responses */}
+                        {performanceData?.courseDetails?.[enrollment.moduleSlug]?.responses && 
+                          performanceData.courseDetails[enrollment.moduleSlug].responses.length > 0 && (
+                          <div className="mt-3 pt-3 border-t border-gray-200">
+                            <h6 className="text-xs font-semibold text-teal-700 mb-2">Scale/Check-in Responses:</h6>
+                            <div className="space-y-2">
+                              {performanceData.courseDetails[enrollment.moduleSlug].responses
+                                .filter((r: any) => r.responseType === 'checking-in' || r.responseType === 'scale')
+                                .map((response: any, idx: number) => (
+                                <div key={idx} className="bg-teal-50 p-2 rounded text-xs">
+                                  <span className="font-medium">{response.pageSlug}:</span>
+                                  <span className="ml-2 text-teal-700">
+                                    Score: {response.score || response.responses?.rating || 'N/A'}
+                                  </span>
+                                  <span className="text-gray-400 ml-2">
+                                    ({new Date(response.completedAt).toLocaleDateString()})
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {/* Module Goals */}
+                        {performanceData?.courseDetails?.[enrollment.moduleSlug]?.goals && 
+                          performanceData.courseDetails[enrollment.moduleSlug].goals.length > 0 && (
+                          <div className="mt-3 pt-3 border-t border-gray-200">
+                            <h6 className="text-xs font-semibold text-blue-700 mb-2">Selected Goals:</h6>
+                            <div className="space-y-1">
+                              {performanceData.courseDetails[enrollment.moduleSlug].goals.map((goal: any, idx: number) => (
+                                <div key={idx} className="flex items-center gap-2 text-xs">
+                                  <span className={`w-2 h-2 rounded-full ${
+                                    goal.status === 'completed' ? 'bg-green-500' : 'bg-blue-500'
+                                  }`}></span>
+                                  <span className="text-gray-700">{goal.goalText}</span>
+                                  <span className={`px-1.5 py-0.5 rounded text-xs ${
+                                    goal.status === 'completed' 
+                                      ? 'bg-green-100 text-green-700' 
+                                      : 'bg-blue-100 text-blue-700'
+                                  }`}>
+                                    {goal.status}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {/* Module Quiz Responses */}
+                        {performanceData?.courseDetails?.[enrollment.moduleSlug]?.quizzes && 
+                          performanceData.courseDetails[enrollment.moduleSlug].quizzes.length > 0 && (
+                          <div className="mt-3 pt-3 border-t border-gray-200">
+                            <h6 className="text-xs font-semibold text-purple-700 mb-2">Quiz Results:</h6>
+                            <div className="space-y-2">
+                              {performanceData.courseDetails[enrollment.moduleSlug].quizzes.map((quiz: any, idx: number) => (
+                                <div key={idx} className="bg-purple-50 p-2 rounded text-xs">
+                                  <span className="font-medium">{quiz.quizId}:</span>
+                                  <span className="ml-2 text-purple-700">
+                                    {quiz.score !== null && quiz.score !== undefined 
+                                      ? `Score: ${quiz.score}/${quiz.totalQuestions}` 
+                                      : 'Completed'}
+                                  </span>
+                                  <span className="text-gray-400 ml-2">
+                                    ({new Date(quiz.completedAt).toLocaleDateString()})
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>

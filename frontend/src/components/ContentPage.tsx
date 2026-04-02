@@ -30,7 +30,8 @@ interface ModuleProgress {
 function getPageType(slug: string, content: ContentBlock[]): 'home' | 'quiz' | 'scale' | 'default' {
   if (slug.includes('home') || slug.includes('00-home')) return 'home'
   if (slug.includes('quiz')) return 'quiz'
-  if (content.some(block => 
+  // Only treat as scale page if it's NOT a checking-in page
+  if (!slug.includes('checking') && content.some(block => 
     block.type === 'paragraph' && 
     block.text.toLowerCase().includes('scale')
   )) return 'scale'
@@ -124,22 +125,23 @@ export default function ContentPage({ modules }: ContentPageProps) {
 
   // Function to enroll user and update progress
   const enrollAndUpdateProgress = async (progressData: ModuleProgress) => {
+    // First, try to enroll user (silently ignore already enrolled errors)
     try {
-      // First, try to enroll user
-      try {
-        await api.post('/modules/enroll', {
-          moduleSlug: progressData.moduleSlug,
-          moduleName: progressData.moduleName,
-          totalPages: progressData.totalPages
-        });
-      } catch (enrollError: any) {
-        // If already enrolled, that's fine - continue with progress update
-        if (enrollError.response?.status !== 400) {
-          throw enrollError;
-        }
+      await api.post('/modules/enroll', {
+        moduleSlug: progressData.moduleSlug,
+        moduleName: progressData.moduleName,
+        totalPages: progressData.totalPages
+      });
+    } catch (enrollError: any) {
+      // If already enrolled (400), that's fine - continue with progress update
+      // Silently ignore this expected error
+      if (enrollError.response?.status !== 400) {
+        console.error('Enrollment error:', enrollError);
       }
+    }
 
-      // Then update progress
+    // Then update progress (separate try-catch to ensure it runs even if enroll fails)
+    try {
       await api.post('/modules/progress', {
         moduleSlug: progressData.moduleSlug,
         moduleName: progressData.moduleName,
@@ -149,11 +151,8 @@ export default function ContentPage({ modules }: ContentPageProps) {
         completedPages: progressData.completedPages,
         timeSpent: progressData.timeSpent
       });
-    } catch (error: any) {
-      // Only log actual errors, not expected 400 (already enrolled)
-      if (error.response?.status !== 400) {
-        console.error('Failed to enroll/update progress:', error);
-      }
+    } catch (progressError: any) {
+      console.error('Failed to update progress:', progressError);
     }
   }
 
@@ -173,11 +172,11 @@ export default function ContentPage({ modules }: ContentPageProps) {
       case 'home':
         return <HomePage content={currentPage.content} moduleSlug={moduleSlug!} />
       case 'quiz':
-        return <QuizPage content={currentPage.content} />
+        return <QuizPage content={currentPage.content} moduleSlug={moduleSlug} pageSlug={pageSlug} moduleName={currentModule.name} />
       case 'scale':
-        return <ScalePage content={currentPage.content} />
+        return <ScalePage content={currentPage.content} moduleSlug={moduleSlug} pageSlug={pageSlug} moduleName={currentModule.name} />
       default:
-        return <ModulePage content={currentPage.content} moduleSlug={moduleSlug!} />
+        return <ModulePage content={currentPage.content} moduleSlug={moduleSlug!} pageSlug={pageSlug!} />
     }
   }
 

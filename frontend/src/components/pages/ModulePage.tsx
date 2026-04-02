@@ -577,13 +577,10 @@ export default function ModulePage({ content, moduleSlug, pageSlug }: ModulePage
   // Helper to check if content contains specific patterns
   const hasPattern = (text: string, pattern: string) => text?.toLowerCase().includes(pattern.toLowerCase())
 
-      // Type guard helper
-  const isParagraphBlock = (block: ContentBlock): block is { type: 'paragraph'; text: string } => 
-    block.type === 'paragraph'
-
   const renderContent = () => {
     const elements: React.ReactNode[] = []
     let i = 0
+    let hasRenderedStarScale = false
 
     while (i < content.length) {
       const block = content[i]
@@ -603,55 +600,125 @@ export default function ModulePage({ content, moduleSlug, pageSlug }: ModulePage
       }
 
       if (block.type === 'paragraph') {
-        // Star scale pattern
-        if (hasPattern(block.text, 'star') && content.slice(i, i + 10).some(b => 
-          b.type === 'paragraph' && /\d+ stars?/i.test((b as {type: 'paragraph', text: string}).text)
-        )) {
-          const question = block.text
+        // Quiz pattern for paragraph-based quiz content (e.g., module 1 quiz.txt)
+        if (hasPattern(block.text, 'question') && /question\s*\d+/i.test(block.text)) {
+          const questions: { question: string; options: string[] }[] = []
+          let currentQuestion: { question: string; options: string[] } | null = null
+          
+          // Start with current block as first question
+          let j = i
+          while (j < content.length) {
+            const currentBlock = content[j]
+            if (currentBlock.type === 'paragraph') {
+              const text = (currentBlock as {type: 'paragraph', text: string}).text
+              if (/question\s*\d+/i.test(text)) {
+                if (currentQuestion) questions.push(currentQuestion)
+                currentQuestion = { question: text.replace(/^question\s*\d*[:.]?\s*/i, ''), options: [] }
+              } else if (currentQuestion && ['true', 'false', "don't know", 'yes', 'no'].some(opt => 
+                text.toLowerCase().includes(opt)
+              )) {
+                currentQuestion.options.push(text)
+              }
+            } else {
+              // Stop on other block types
+              break
+            }
+            j++
+          }
+          if (currentQuestion) questions.push(currentQuestion)
+
+          if (questions.length > 0) {
+            elements.push(
+              <QuizComponent
+                key={`quiz-${i}`}
+                questions={questions}
+                moduleSlug={moduleSlug}
+                pageSlug={pageSlug || 'quiz'}
+                moduleName={moduleSlug}
+              />
+            )
+            i = j
+            continue
+          }
+        }
+
+        // Star scale pattern - hardcoded for all checking-in pages
+        // Render StarScale for first paragraph that's not empty and not a star rating
+        const isCheckingInPage = pageSlug?.includes('checking-in')
+        const isStarRatingText = /^\d+\s*stars?/i.test(block.text)
+        const isEmptyOrShort = block.text.length < 10
+        
+        if (isCheckingInPage && !isStarRatingText && !isEmptyOrShort && !hasRenderedStarScale) {
+          hasRenderedStarScale = true
           elements.push(
             <StarScale 
               key={`scale-${i}`} 
-              question={question} 
+              question={block.text} 
               moduleSlug={moduleSlug}
               pageSlug={pageSlug || 'checking-in'}
             />
           )
-          i++
+          // Skip the star rating paragraphs (1 Star, 2 Stars, etc.)
+          let j = i + 1
+          while (j < content.length && content[j].type === 'paragraph' && 
+                 /^\d+\s*stars?/i.test((content[j] as {type: 'paragraph', text: string}).text)) {
+            j++
+          }
+          i = j
           continue
         }
 
-        // Click to reveal pattern
-        if (block.type === 'paragraph' && hasPattern(block.text, 'click') && hasPattern(block.text, 'reveal')) {
-          const title = block.text
+        // Click to reveal patterns - detect various click to reveal text patterns
+        const clickRevealPatterns = [
+          /\(click.*reveal\)|click.*reveal|click for more|click text below/i,
+          /\(click to reveal\)|\(click for more\)/i
+        ]
+        if (clickRevealPatterns.some(pattern => pattern.test(block.text))) {
+          const title = block.text.replace(/\(click.*\)/i, '').trim() || 'Click to reveal'
           const expandableContent: React.ReactNode[] = []
           i++
           
           while (i < content.length && content[i].type !== 'heading' && 
-                 !(content[i].type === 'paragraph' && isParagraphBlock(content[i]) && hasPattern(content[i].text, 'click'))) {
+                 !(content[i].type === 'paragraph' && 
+                   clickRevealPatterns.some(pattern => pattern.test((content[i] as {type: 'paragraph', text: string}).text)))) {
             const innerBlock = content[i]
             if (innerBlock.type === 'paragraph') {
-              expandableContent.push(<p key={i} className="text-gray-700 mb-2">{(innerBlock as {type: 'paragraph', text: string}).text}</p>)
+              expandableContent.push(<p key={i} className="text-gray-700 mb-2 leading-relaxed">{(innerBlock as {type: 'paragraph', text: string}).text}</p>)
             } else if (innerBlock.type === 'list') {
               expandableContent.push(
-                <ul key={i} className="list-disc pl-6 space-y-1">
+                <ul key={i} className="list-disc pl-6 space-y-2 my-3">
                   {(innerBlock as {type: 'list', items: string[]}).items.map((item, itemIdx) => (
                     <li key={itemIdx} className="text-gray-700">{item}</li>
                   ))}
                 </ul>
               )
+            } else if (innerBlock.type === 'image') {
+              const imgBlock = innerBlock as { type: 'image'; src: string; alt?: string }
+              expandableContent.push(
+                <div key={i} className="my-4 flex justify-center">
+                  <img
+                    src={`${API_URL}/content/${moduleSlug.replace('m', 'module_').replace(/-/g, '_')}/images/${imgBlock.src}?lang=${language}`}
+                    alt={imgBlock.alt || ''}
+                    className="max-w-md h-auto rounded-lg shadow-md"
+                    onError={(e) => { e.currentTarget.style.display = 'none' }}
+                  />
+                </div>
+              )
             }
             i++
           }
 
-          elements.push(
-            <ExpandableSection key={`expand-${i}`} title={title}>
-              {expandableContent}
-            </ExpandableSection>
-          )
+          if (expandableContent.length > 0) {
+            elements.push(
+              <ExpandableSection key={`expand-${i}`} title={title}>
+                {expandableContent}
+              </ExpandableSection>
+            )
+          }
           continue
         }
 
-        // Video URL pattern
+        // Video URL pattern - detect Vimeo URLs
         const videoMatch = block.type === 'paragraph' ? block.text.match(/^>(https:\/\/player\.vimeo\.com\/video\/\d+)/) : null
         if (videoMatch) {
           elements.push(<VideoEmbed key={`video-${i}`} url={videoMatch[1]} />)
@@ -659,8 +726,8 @@ export default function ModulePage({ content, moduleSlug, pageSlug }: ModulePage
           continue
         }
 
-        // Skip button for pandemic
-        if (hasPattern(block.text, 'pandemic') && !skipClicked) {
+        // Skip button for skippable content (pandemic or explicitly marked)
+        if ((hasPattern(block.text, 'pandemic') || hasPattern(block.text, 'skip')) && !skipClicked) {
           elements.push(
             <div key={`skip-${i}`} className="flex justify-end mb-4">
               <SkipButton onSkip={() => setSkipClicked(true)} />
@@ -668,14 +735,17 @@ export default function ModulePage({ content, moduleSlug, pageSlug }: ModulePage
           )
         }
 
-        // Special styled paragraph
-        if (hasPattern(block.text, 'no one way') || hasPattern(block.text, 'works for one')) {
+        // Special styled paragraphs - make them attractive
+        const isSpecialText = hasPattern(block.text, 'no one way') || hasPattern(block.text, 'works for one') ||
+                              hasPattern(block.text, 'separate their emotions') || hasPattern(block.text, 'behaviours')
+        
+        if (isSpecialText) {
           elements.push(
-            <div key={i} className="bg-gradient-to-r from-amber-50 to-yellow-50 border-l-4 border-amber-400 p-4 rounded-r-lg mb-6">
-              <p className="text-gray-700 italic">{block.text}</p>
+            <div key={i} className="bg-gradient-to-r from-amber-50 via-yellow-50 to-amber-50 border-l-4 border-amber-500 p-5 rounded-r-xl mb-6 shadow-sm">
+              <p className="text-gray-800 leading-relaxed font-medium">{block.text}</p>
             </div>
           )
-        } else {
+        } else if (!skipClicked || !hasPattern(block.text, 'pandemic')) {
           elements.push(<p key={i} className="text-lg text-gray-700 mb-6 leading-relaxed">{block.text}</p>)
         }
         i++
@@ -683,72 +753,151 @@ export default function ModulePage({ content, moduleSlug, pageSlug }: ModulePage
       }
 
       if (block.type === 'list') {
-        // Clickable titles pattern
-        if (block.items.every(item => item.split(' ').length <= 3) && 
-            content[i + 1]?.type === 'paragraph') {
-          const titles = block.items
-          i++
-          
-          titles.forEach((title, idx) => {
-            const nextBlock = content[i]
-            const contentText = nextBlock?.type === 'paragraph' ? (nextBlock as {type: 'paragraph', text: string}).text : ''
-            if (nextBlock?.type === 'paragraph') i++
-            
-            elements.push(
-              <ClickableTitleItem key={`clickable-${idx}`} title={title} content={contentText} />
-            )
-          })
-          continue
-        }
-
-        // Do/Don't pattern
-        const doItems = block.items.filter(item => 
-          hasPattern(item, 'do:') || (!hasPattern(item, "don't") && !hasPattern(item, 'avoid'))
-        )
-        const dontItems = block.items.filter(item => 
-          hasPattern(item, "don't") || hasPattern(item, 'avoid') || hasPattern(item, 'never')
+        // Video activity pattern - detect Identify/Validate/Understand questions
+        // Check if this is the activity pattern with questions and I/V/U options
+        const hasIVUOptions = block.items.some(item => 
+          ['identify', 'validate', 'understand'].some(opt => 
+            item.toLowerCase().trim() === opt
+          )
         )
         
-        if (doItems.length > 0 && dontItems.length > 0) {
-          elements.push(
-            <DoDontTable 
-              key={`dodont-${i}`} 
-              doItems={doItems.map(s => s.replace(/^Do:\s*/i, ''))}
-              dontItems={dontItems.map(s => s.replace(/^Don't:\s*/i, '').replace(/^(Avoid|Never):\s*/i, ''))}
-            />
+        // Check if list contains questions (longer text) mixed with I/V/U options
+        const questionItems = block.items.filter(item => 
+          item.length > 20 && !['identify', 'validate', 'understand'].some(opt => 
+            item.toLowerCase().trim() === opt
           )
-          i++
-          continue
-        }
-
-        // Goal selection pattern
-        if (hasPattern(block.items[0], 'try') || hasPattern(block.items[0], 'select a goal') || 
-            hasPattern(block.items[0], 'select one goal')) {
-          const goals = block.items.map((item, goalIdx) => ({
-            text: item.replace(/^-?\s*/, ''),
-            id: `goal-${moduleSlug}-${goalIdx}`,
-            links: []
+        )
+        
+        if (hasIVUOptions && questionItems.length >= 1) {
+          const questions = questionItems.map((item) => ({
+            question: item,
+            options: ['Identify', 'Validate', 'Understand']
           }))
+
+          if (questions.length > 0) {
+            elements.push(
+              <VideoActivity
+                key={`activity-${i}`}
+                questions={questions}
+                moduleSlug={moduleSlug}
+                pageSlug={pageSlug || 'activity'}
+              />
+            )
+            i++
+            continue
+          }
+        }
+
+        // Clickable titles pattern - single word/title items followed by descriptive paragraphs
+        // Detect pattern: short list items (1-3 words) followed by paragraphs
+        const hasShortTitles = block.items.every(item => item.split(/\s+/).length <= 4)
+        const nextBlocksAreParagraphs = content.slice(i + 1, i + 1 + block.items.length)
+          .every(b => b?.type === 'paragraph')
+        
+        if (hasShortTitles && nextBlocksAreParagraphs && block.items.length >= 2) {
+          const titles = block.items
+          let contentIdx = i + 1
           
-          elements.push(
-            <GoalSelection 
-              key={`goals-${i}`}
-              goals={goals}
-              moduleSlug={moduleSlug}
-              moduleName={moduleSlug}
-            />
-          )
+          titles.forEach((title, idx) => {
+            const nextBlock = content[contentIdx]
+            if (nextBlock?.type === 'paragraph') {
+              const contentText = (nextBlock as {type: 'paragraph', text: string}).text
+              elements.push(
+                <ClickableTitleItem key={`clickable-${i}-${idx}`} title={title} content={contentText} />
+              )
+              contentIdx++
+            }
+          })
+          i = contentIdx
+          continue
+        }
+
+        // Do/Don't pattern - detect by H2/H3 headings in content before the list
+        // Look for H2/H3 with "Do" or "Don't" nearby
+        const prevBlock = i > 0 ? content[i - 1] : null
+        const hasDoHeading = prevBlock?.type === 'heading' && 
+          /\b(do|h2 do)\b/i.test((prevBlock as {type: 'heading', text: string}).text)
+        const hasDontHeading = prevBlock?.type === 'heading' && 
+          /\b(don't|dont|h3 don't|avoid)\b/i.test((prevBlock as {type: 'heading', text: string}).text)
+        
+        // Also check list items for Do:/Don't: prefixes or patterns
+        const doPrefixItems = block.items.filter(item => /^Do[:\-]/i.test(item))
+        const dontPrefixItems = block.items.filter(item => /^Don't[:\-]|^H3\s+Don't/i.test(item))
+        
+        if ((doPrefixItems.length > 0 && dontPrefixItems.length > 0) || 
+            (hasDoHeading && hasDontHeading) ||
+            (block.items.some(item => hasPattern(item, 'do:')) && block.items.some(item => hasPattern(item, "don't")))) {
+          
+          let doItems: string[] = []
+          let dontItems: string[] = []
+          
+          if (doPrefixItems.length > 0 || dontPrefixItems.length > 0) {
+            // Items have explicit prefixes
+            doItems = block.items
+              .filter(item => /^Do[:\-]/i.test(item) || (!/^Don't[:\-]/i.test(item) && !/^H3\s+Don't/i.test(item)))
+              .map(s => s.replace(/^Do[:\-]\s*/i, ''))
+            dontItems = block.items
+              .filter(item => /^Don't[:\-]|^H3\s+Don't/i.test(item))
+              .map(s => s.replace(/^Don't[:\-]\s*/i, '').replace(/^H3\s+Don't[:\-]?\s*/i, ''))
+          } else {
+            // Split by content patterns
+            doItems = block.items.filter(item => 
+              !hasPattern(item, "don't") && !hasPattern(item, 'avoid') && !hasPattern(item, 'never')
+            )
+            dontItems = block.items.filter(item => 
+              hasPattern(item, "don't") || hasPattern(item, 'avoid') || hasPattern(item, 'never')
+            )
+          }
+          
+          if (doItems.length > 0 || dontItems.length > 0) {
+            elements.push(
+              <DoDontTable 
+                key={`dodont-${i}`} 
+                doItems={doItems}
+                dontItems={dontItems}
+              />
+            )
+            i++
+            continue
+          }
+        }
+
+        // Goal selection pattern - detect goal-related lists
+        if (hasPattern(block.items[0], 'try') || hasPattern(block.items[0], 'select a goal') || 
+            hasPattern(block.items[0], 'select one goal') || hasPattern(block.items[0], 'the goal you have selected')) {
+          
+          // Filter out the header/title items, keep only actual goals
+          const goals = block.items
+            .filter(item => !hasPattern(item, 'the goal you have selected') && item.length > 5)
+            .map((item, goalIdx) => ({
+              text: item.replace(/^-?\s*/, '').replace(/^\*\s*/, ''),
+              id: `goal-${moduleSlug}-${goalIdx}`,
+              links: []
+            }))
+          
+          if (goals.length > 0) {
+            elements.push(
+              <GoalSelection 
+                key={`goals-${i}`}
+                goals={goals}
+                moduleSlug={moduleSlug}
+                moduleName={moduleSlug}
+              />
+            )
+          }
           i++
           continue
         }
 
-        // Quiz pattern
-        if (block.items.some(item => hasPattern(item, 'question') || hasPattern(item, 'true') || hasPattern(item, 'false'))) {
+        // Quiz pattern - detect quiz questions in list items
+        if (block.items.some(item => /question\s*\d+/i.test(item)) || 
+            block.items.some(item => hasPattern(item, 'true') || hasPattern(item, 'false'))) {
+          
           const questions: { question: string; options: string[] }[] = []
           let currentQuestion: { question: string; options: string[] } | null = null
           
           block.items.forEach(item => {
-            if (hasPattern(item, 'question')) {
+            if (/question\s*\d+/i.test(item)) {
               if (currentQuestion) questions.push(currentQuestion)
               currentQuestion = { question: item.replace(/^question\s*\d*[:.]?\s*/i, ''), options: [] }
             } else if (currentQuestion && ['true', 'false', "don't know", 'yes', 'no'].some(opt => 
@@ -774,35 +923,28 @@ export default function ModulePage({ content, moduleSlug, pageSlug }: ModulePage
           }
         }
 
-        // Video activity pattern
-        if (block.items.some(item => 
-          hasPattern(item, 'identify') || hasPattern(item, 'validate') || hasPattern(item, 'understand')
-        )) {
-          const questions = block.items
-            .filter(item => !['identify', 'validate', 'understand'].some(opt => 
-              item.toLowerCase().trim() === opt
-            ))
-            .map((item, _questionIdx) => ({
-              question: item,
-              options: ['Identify', 'Validate', 'Understand']
-            }))
-
-          if (questions.length > 0) {
-            elements.push(
-              <VideoActivity
-                key={`activity-${i}`}
-                questions={questions}
-                moduleSlug={moduleSlug}
-                pageSlug={pageSlug || 'activity'}
-              />
-            )
-            i++
-            continue
-          }
-        }
-
-        // Attractive cards for special content
-        if (block.items.some(item => hasPattern(item, 'encouragement') || hasPattern(item, 'praise'))) {
+        // Attractive cards for H3 content sections - detect H3 followed by list items
+        const prevHeading = i > 0 ? content[i - 1] : null
+        const isH3Heading = prevHeading?.type === 'heading' && (prevHeading as {type: 'heading', level: number, text: string}).level === 3
+        if (isH3Heading) {
+          const headingText = (prevHeading as {type: 'heading', level: number, text: string}).text.toLowerCase()
+          
+          // Determine card type based on heading
+          let cardType: 'encouragement' | 'acknowledgement' | 'affection' | 'appreciation' | 'default' = 'default'
+          if (headingText.includes('encouragement') || headingText.includes('praise')) cardType = 'encouragement'
+          else if (headingText.includes('acknowledgement')) cardType = 'acknowledgement'
+          else if (headingText.includes('affection')) cardType = 'affection'
+          else if (headingText.includes('appreciation')) cardType = 'appreciation'
+          
+          elements.push(
+            <div key={i} className="grid gap-3 my-4">
+              {block.items.map((item, cardIdx) => (
+                <AttractiveCard key={cardIdx} text={item} type={cardType} />
+              ))}
+            </div>
+          )
+        } else if (block.items.some(item => hasPattern(item, 'encouragement') || hasPattern(item, 'praise'))) {
+          // Fallback for lists with encouragement keywords
           elements.push(
             <div key={i} className="grid gap-3">
               {block.items.map((item, cardIdx) => {

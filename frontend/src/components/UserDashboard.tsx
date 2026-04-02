@@ -345,10 +345,10 @@ export default function UserDashboard() {
                         <div className="w-full bg-gray-200 rounded-full h-2">
                           <div 
                             className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                            style={{ width: `${module.percentage}%` }}
+                            style={{ width: `${Math.min(100, module.percentage || 0)}%` }}
                           ></div>
                         </div>
-                        <p className="text-xs text-gray-500">{module.percentage}% complete</p>
+                        <p className="text-xs text-gray-500">{Math.min(100, module.percentage || 0)}% complete</p>
                       </div>
                     ))}
                     {moduleProgress.length === 0 && (
@@ -528,7 +528,7 @@ export default function UserDashboard() {
                             <div className="w-full bg-gray-200 rounded-full h-2">
                               <div 
                                 className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                                style={{ width: `${module.percentage}%` }}
+                                style={{ width: `${Math.min(100, module.percentage || 0)}%` }}
                               ></div>
                             </div>
                           </div>

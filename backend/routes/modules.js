@@ -81,7 +81,8 @@ router.post('/progress', async (req, res) => {
     }
 
     // Calculate percentage and determine status
-    const percentage = Math.round(((completedPages || []).length / totalPages) * 100);
+    const rawPercentage = Math.round(((completedPages || []).length / totalPages) * 100);
+    const percentage = Math.min(rawPercentage, 100); // Cap at 100%
     const status = percentage >= 100 ? 'completed' : 'in_progress';
 
     // Find or create enrollment

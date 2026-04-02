@@ -81,8 +81,7 @@ export default function Profile() {
   const handleSaveProfile = async () => {
     setLoading(true)
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      await api.patch('/auth/profile', formData)
       setMessage({ type: 'success', text: 'Profile updated successfully!' })
       setIsEditing(false)
     } catch (error) {
