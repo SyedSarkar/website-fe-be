@@ -577,11 +577,9 @@ export default function ModulePage({ content, moduleSlug, pageSlug }: ModulePage
   // Helper to check if content contains specific patterns
   const hasPattern = (text: string, pattern: string) => text?.toLowerCase().includes(pattern.toLowerCase())
 
-      // Type guard helpers
+      // Type guard helper
   const isParagraphBlock = (block: ContentBlock): block is { type: 'paragraph'; text: string } => 
     block.type === 'paragraph'
-  const isImageBlock = (block: ContentBlock): block is { type: 'image'; src: string; alt?: string } => 
-    block.type === 'image'
 
   const renderContent = () => {
     const elements: React.ReactNode[] = []
@@ -784,7 +782,7 @@ export default function ModulePage({ content, moduleSlug, pageSlug }: ModulePage
             .filter(item => !['identify', 'validate', 'understand'].some(opt => 
               item.toLowerCase().trim() === opt
             ))
-            .map((item, questionIdx) => ({
+            .map((item, _questionIdx) => ({
               question: item,
               options: ['Identify', 'Validate', 'Understand']
             }))
