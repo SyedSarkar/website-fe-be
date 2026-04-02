@@ -1,6 +1,7 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 import { useState, useEffect } from 'react'
+import LanguageSwitcher from '../LanguageSwitcher'
 import { 
   Home, 
   Phone, 
@@ -88,6 +89,11 @@ export default function Header({ transparent = false }: HeaderProps) {
                 {item.label}
               </Link>
             ))}
+
+            {/* Language Switcher */}
+            <div className={`ml-2 ${transparent && !scrolled ? 'text-white' : ''}`}>
+              <LanguageSwitcher />
+            </div>
 
             {/* Profile / Auth */}
             {isAuthenticated ? (
