@@ -123,7 +123,7 @@ export default function Sidebar({ modules, onClose }: SidebarProps) {
     const module = modules.find(m => m.slug === moduleSlug)
     if (!progress || !module) return 0
     const percentage = Math.round((progress.completedPages.length / module.pages.length) * 100)
-    return isNaN(percentage) ? 0 : percentage
+    return isNaN(percentage) ? 0 : Math.min(percentage, 100) // Cap at 100%
   }
 
   return (
