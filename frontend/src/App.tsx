@@ -190,7 +190,7 @@ function AppContent() {
                 path="/user-dashboard" 
                 element={
                   <ProtectedUserRoute>
-                    <UserDashboard />
+                    <UserDashboard modules={modules} />
                   </ProtectedUserRoute>
                 } 
               />

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { useScaleCompletion } from '../hooks/useScaleCompletion'
 import api from '../lib/api'
+import type { Module } from '../types'
 import { 
   BarChart3, 
   TrendingUp, 
@@ -42,6 +43,8 @@ interface ModuleProgress {
   lastAccessed: string
   status: string
   currentPageSlug?: string
+  actualTotalPages?: number // Current module definition total pages
+  actualPercentage?: number // Calculated using actual module data
 }
 
 interface UserStats {
@@ -54,7 +57,11 @@ interface UserStats {
   streak: number
 }
 
-export default function UserDashboard() {
+interface UserDashboardProps {
+  modules: Module[]
+}
+
+export default function UserDashboard({ modules }: UserDashboardProps) {
   const { user, logout } = useAuth()
   const { allScalesCompleted, loading: scalesLoading, refresh } = useScaleCompletion()
   const navigate = useNavigate()
@@ -107,19 +114,33 @@ export default function UserDashboard() {
       ])
       
       setScaleResponses(scalesResponse.data.data || [])
-      setModuleProgress(modulesResponse.data.data || [])
+      
+      // Enhance progress data with actual module totals from props
+      const rawProgress = modulesResponse.data.data || []
+      const enhancedProgress = rawProgress.map((p: any) => {
+        // Find current module definition to get actual total pages
+        const currentModule = modules.find(m => m.slug === p.moduleSlug)
+        const actualTotal = currentModule?.pages?.length || p.totalPages
+        const actualPercentage = Math.min(100, Math.round((p.completedPages.length / actualTotal) * 100))
+        return {
+          ...p,
+          actualTotalPages: actualTotal,
+          actualPercentage: actualPercentage
+        }
+      })
+      setModuleProgress(enhancedProgress)
 
-      // Calculate user stats
+      // Calculate user stats using actual percentages
       const stats: UserStats = {
         totalScalesCompleted: scalesResponse.data.data?.length || 0,
-        totalModulesEnrolled: modulesResponse.data.data?.length || 0,
-        totalModulesCompleted: modulesResponse.data.data?.filter((m: any) => m.status === 'completed').length || 0,
-        totalTimeSpent: modulesResponse.data.data?.reduce((sum: number, m: any) => sum + (m.progress?.timeSpent || 0), 0) || 0,
+        totalModulesEnrolled: enhancedProgress.length || 0,
+        totalModulesCompleted: enhancedProgress.filter((m: any) => m.actualPercentage === 100).length || 0,
+        totalTimeSpent: enhancedProgress?.reduce((sum: number, m: any) => sum + (m.timeSpent || 0), 0) || 0,
         averageScore: scalesResponse.data.data?.length > 0 
           ? scalesResponse.data.data.reduce((sum: number, s: any) => sum + s.totalScore, 0) / scalesResponse.data.data.length 
           : 0,
-        lastActivity: getLastActivity(scalesResponse.data.data || [], modulesResponse.data.data || []),
-        streak: calculateStreak(modulesResponse.data.data || [])
+        lastActivity: getLastActivity(scalesResponse.data.data || [], enhancedProgress || []),
+        streak: calculateStreak(enhancedProgress || [])
       }
       setUserStats(stats)
     } catch (error) {
@@ -345,10 +366,10 @@ export default function UserDashboard() {
                         <div className="w-full bg-gray-200 rounded-full h-2">
                           <div 
                             className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                            style={{ width: `${Math.min(100, module.percentage || 0)}%` }}
+                            style={{ width: `${module.actualPercentage || 0}%` }}
                           ></div>
                         </div>
-                        <p className="text-xs text-gray-500">{Math.min(100, module.percentage || 0)}% complete</p>
+                        <p className="text-xs text-gray-500">{module.actualPercentage || 0}% complete</p>
                       </div>
                     ))}
                     {moduleProgress.length === 0 && (
@@ -520,24 +541,22 @@ export default function UserDashboard() {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="w-full max-w-xs">
                             <div className="flex items-center justify-between mb-1">
-                              <span className="text-sm text-gray-900">
-                                {Math.min(100, Math.round((module.completedPages.length / module.totalPages) * 100))}%
-                              </span>
+                              <span className="text-sm text-gray-900">{module.actualPercentage}%</span>
                               <span className="text-xs text-gray-500">
-                                {module.completedPages.length}/{module.totalPages}
+                                {module.completedPages.length}/{module.actualTotalPages}
                               </span>
                             </div>
                             <div className="w-full bg-gray-200 rounded-full h-2">
                               <div 
                                 className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                                style={{ width: `${Math.min(100, Math.round((module.completedPages.length / module.totalPages) * 100))}%` }}
+                                style={{ width: `${module.actualPercentage || 0}%` }}
                               ></div>
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getModuleStatusColor(module.status)}`}>
-                            {module.status.replace('_', ' ')}
+                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getModuleStatusColor(module.actualPercentage === 100 ? 'completed' : module.status)}`}>
+                            {module.actualPercentage === 100 ? 'completed' : module.status.replace('_', ' ')}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -551,7 +570,7 @@ export default function UserDashboard() {
                             to={`/module/${module.moduleSlug}/${module.currentPageSlug || '00-home'}`}
                             className="px-3 py-1 bg-teal-600 text-white rounded hover:bg-teal-700 transition-colors"
                           >
-                            {module.percentage === 100 ? 'Review' : 'Continue'}
+                            {module.actualPercentage === 100 ? 'Review' : 'Continue'}
                           </Link>
                         </td>
                       </tr>
