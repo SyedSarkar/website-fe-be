@@ -10,8 +10,10 @@ import {
   HelpCircle
 } from 'lucide-react'
 import Header from '../navigation/Header'
+import { useLanguage } from '../../hooks/useLanguage'
 
 export default function Contact() {
+  const { t } = useLanguage()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -33,25 +35,25 @@ export default function Contact() {
   const contactInfo = [
     {
       icon: Phone,
-      title: 'Phone',
+      title: t('phone'),
       content: '+1 (555) 123-4567',
-      description: 'Mon-Fri from 8am to 5pm'
+      description: t('mon_fri_hours')
     },
     {
       icon: Mail,
-      title: 'Email',
+      title: t('email'),
       content: 'support@partnersinparenting.com',
-      description: 'We respond within 24 hours'
+      description: t('respond_24h')
     },
     {
       icon: MapPin,
-      title: 'Office',
+      title: t('office'),
       content: '123 Family Lane, Suite 100',
       description: 'Parenting City, PC 12345'
     },
     {
       icon: Clock,
-      title: 'Working Hours',
+      title: t('working_hours'),
       content: 'Monday - Friday',
       description: '8:00 AM - 5:00 PM EST'
     }
@@ -59,20 +61,20 @@ export default function Contact() {
 
   const faqs = [
     {
-      question: 'How do I get started with the program?',
-      answer: 'Simply create an account, complete the initial assessments, and you\'ll be guided through personalized learning modules.'
+      question: t('faq_q1'),
+      answer: t('faq_a1')
     },
     {
-      question: 'Is the program suitable for all parenting stages?',
-      answer: 'Yes! Our program is designed to support parents with children of all ages, from toddlers to teenagers.'
+      question: t('faq_q2'),
+      answer: t('faq_a2')
     },
     {
-      question: 'Can I access the program on mobile devices?',
-      answer: 'Absolutely! Our platform is fully responsive and works seamlessly on smartphones, tablets, and computers.'
+      question: t('faq_q3'),
+      answer: t('faq_a3')
     },
     {
-      question: 'What if I need additional support?',
-      answer: 'We offer various support channels including email support, community forums, and optional one-on-one consultations.'
+      question: t('faq_q4'),
+      answer: t('faq_a4')
     }
   ]
 
@@ -84,10 +86,10 @@ export default function Contact() {
       <section className="pt-24 pb-12 bg-gradient-to-br from-teal-600 to-blue-700">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">
-            Contact Us
+            {t('contact_us')}
           </h1>
           <p className="text-xl text-white/90 max-w-2xl mx-auto">
-            We'd love to hear from you. Get in touch with our team for any questions or support.
+            {t('contact_hero_desc')}
           </p>
         </div>
       </section>
@@ -104,7 +106,7 @@ export default function Contact() {
                 <div className="w-14 h-14 bg-gradient-to-br from-teal-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
                   <info.icon className="w-7 h-7 text-white" />
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-1">{info.title}</h3>
+                <h3 className="text-lg font-bold text-gray-900 mb-1">{t(info.title)}</h3>
                 <p className="text-teal-600 font-medium mb-1">{info.content}</p>
                 <p className="text-sm text-gray-500">{info.description}</p>
               </div>
@@ -121,7 +123,7 @@ export default function Contact() {
             <div className="bg-white rounded-2xl shadow-sm p-8">
               <div className="flex items-center mb-6">
                 <MessageSquare className="w-6 h-6 text-teal-600 mr-3" />
-                <h2 className="text-2xl font-bold text-gray-900">Send us a Message</h2>
+                <h2 className="text-2xl font-bold text-gray-900">{t('send_message')}</h2>
               </div>
 
               {submitted ? (
@@ -129,15 +131,15 @@ export default function Contact() {
                   <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <CheckCircle className="w-8 h-8 text-green-600" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">Message Sent!</h3>
-                  <p className="text-gray-600">We'll get back to you within 24 hours.</p>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">{t('message_sent')}</h3>
+                  <p className="text-gray-600">{t('get_back_24h')}</p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Your Name
+                        {t('your_name')}
                       </label>
                       <input
                         type="text"
@@ -150,7 +152,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Email Address
+                        {t('email_address')}
                       </label>
                       <input
                         type="email"
@@ -165,7 +167,7 @@ export default function Contact() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Subject
+                      {t('subject')}
                     </label>
                     <select
                       required
@@ -173,18 +175,18 @@ export default function Contact() {
                       onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     >
-                      <option value="">Select a subject</option>
-                      <option value="general">General Inquiry</option>
-                      <option value="support">Technical Support</option>
-                      <option value="billing">Billing Question</option>
-                      <option value="feedback">Feedback</option>
-                      <option value="other">Other</option>
+                      <option value="">{t('select_subject')}</option>
+                      <option value="general">{t('general_inquiry')}</option>
+                      <option value="support">{t('technical_support')}</option>
+                      <option value="billing">{t('billing_question')}</option>
+                      <option value="feedback">{t('feedback')}</option>
+                      <option value="other">{t('other')}</option>
                     </select>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Message
+                      {t('message')}
                     </label>
                     <textarea
                       required
@@ -192,7 +194,7 @@ export default function Contact() {
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent resize-none"
-                      placeholder="How can we help you?"
+                      placeholder={t('how_can_help')}
                     />
                   </div>
 
@@ -201,7 +203,7 @@ export default function Contact() {
                     className="w-full px-8 py-4 bg-gradient-to-r from-teal-600 to-blue-600 text-white rounded-lg font-semibold hover:from-teal-700 hover:to-blue-700 transition-all flex items-center justify-center"
                   >
                     <Send className="w-5 h-5 mr-2" />
-                    Send Message
+                    {t('send_message_btn')}
                   </button>
                 </form>
               )}
@@ -211,7 +213,7 @@ export default function Contact() {
             <div>
               <div className="flex items-center mb-6">
                 <HelpCircle className="w-6 h-6 text-teal-600 mr-3" />
-                <h2 className="text-2xl font-bold text-gray-900">Frequently Asked Questions</h2>
+                <h2 className="text-2xl font-bold text-gray-900">{t('faq')}</h2>
               </div>
 
               <div className="space-y-4">
@@ -227,16 +229,16 @@ export default function Contact() {
               </div>
 
               <div className="mt-8 bg-gradient-to-br from-teal-50 to-blue-50 rounded-xl p-6">
-                <h3 className="font-bold text-gray-900 mb-2">Still have questions?</h3>
+                <h3 className="font-bold text-gray-900 mb-2">{t('still_have_questions')}</h3>
                 <p className="text-gray-600 mb-4">
-                  Our support team is always here to help you with any questions or concerns.
+                  {t('support_team_help')}
                 </p>
                 <a
                   href="mailto:support@partnersinparenting.com"
                   className="inline-flex items-center text-teal-600 font-semibold hover:text-teal-700"
                 >
                   <Mail className="w-5 h-5 mr-2" />
-                  Email Support Team
+                  {t('email_support_team')}
                 </a>
               </div>
             </div>
@@ -250,7 +252,7 @@ export default function Contact() {
           <div className="bg-gray-100 rounded-2xl h-64 flex items-center justify-center">
             <div className="text-center">
               <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500">Interactive Map Coming Soon</p>
+              <p className="text-gray-500">{t('map_coming_soon')}</p>
               <p className="text-sm text-gray-400">123 Family Lane, Suite 100, Parenting City, PC 12345</p>
             </div>
           </div>

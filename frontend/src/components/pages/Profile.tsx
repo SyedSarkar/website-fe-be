@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../../hooks/useAuth'
+import { useLanguage } from '../../hooks/useLanguage'
 import { useNavigate } from 'react-router-dom'
 import api from '../../lib/api'
 import { 
@@ -30,6 +31,7 @@ interface UserStats {
 
 export default function Profile() {
   const { user, logout } = useAuth()
+  const { t } = useLanguage()
   const navigate = useNavigate()
   const [isEditing, setIsEditing] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -82,10 +84,10 @@ export default function Profile() {
     setLoading(true)
     try {
       await api.patch('/auth/profile', formData)
-      setMessage({ type: 'success', text: 'Profile updated successfully!' })
+      setMessage({ type: 'success', text: t('profile_updated') })
       setIsEditing(false)
     } catch (error) {
-      setMessage({ type: 'error', text: 'Failed to update profile' })
+      setMessage({ type: 'error', text: t('failed_update_profile') })
     } finally {
       setLoading(false)
     }
@@ -93,7 +95,7 @@ export default function Profile() {
 
   const handleChangePassword = async () => {
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      setMessage({ type: 'error', text: 'New passwords do not match' })
+      setMessage({ type: 'error', text: t('passwords_not_match') })
       return
     }
 
@@ -103,11 +105,11 @@ export default function Profile() {
         currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword
       })
-      setMessage({ type: 'success', text: 'Password changed successfully!' })
+      setMessage({ type: 'success', text: t('password_changed') })
       setShowPasswordModal(false)
       setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' })
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.response?.data?.message || 'Failed to change password' })
+      setMessage({ type: 'error', text: error.response?.data?.message || t('failed_change_password') })
     } finally {
       setLoading(false)
     }
@@ -126,8 +128,8 @@ export default function Profile() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
-            <p className="text-gray-600">Manage your account settings and view your progress</p>
+            <h1 className="text-3xl font-bold text-gray-900">{t('my_profile')}</h1>
+            <p className="text-gray-600">{t('manage_account_settings')}</p>
           </div>
 
           {/* Message */}
@@ -159,7 +161,7 @@ export default function Profile() {
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-bold text-gray-900 flex items-center">
                     <User className="w-5 h-5 mr-2 text-teal-600" />
-                    Personal Information
+                    {t('personal_information')}
                   </h2>
                   {!isEditing ? (
                     <button
@@ -167,7 +169,7 @@ export default function Profile() {
                       className="flex items-center px-4 py-2 text-teal-600 hover:bg-teal-50 rounded-lg transition-colors"
                     >
                       <Edit2 className="w-4 h-4 mr-2" />
-                      Edit
+                      {t('edit')}
                     </button>
                   ) : (
                     <div className="flex space-x-2">
@@ -176,7 +178,7 @@ export default function Profile() {
                         className="flex items-center px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
                       >
                         <X className="w-4 h-4 mr-2" />
-                        Cancel
+                        {t('cancel')}
                       </button>
                       <button
                         onClick={handleSaveProfile}
@@ -184,7 +186,7 @@ export default function Profile() {
                         className="flex items-center px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-50"
                       >
                         <Save className="w-4 h-4 mr-2" />
-                        {loading ? 'Saving...' : 'Save'}
+                        {loading ? t('saving') : t('save')}
                       </button>
                     </div>
                   )}
@@ -197,13 +199,13 @@ export default function Profile() {
                     </div>
                     <div>
                       <h3 className="text-xl font-bold text-gray-900">{user?.name}</h3>
-                      <p className="text-gray-500 capitalize">{user?.role} Account</p>
+                      <p className="text-gray-500 capitalize">{user?.role} {t('account')}</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('full_name')}</label>
                       {isEditing ? (
                         <input
                           type="text"
@@ -220,7 +222,7 @@ export default function Profile() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('email')}</label>
                       {isEditing ? (
                         <input
                           type="email"
@@ -237,33 +239,33 @@ export default function Profile() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('phone')}</label>
                       {isEditing ? (
                         <input
                           type="tel"
                           value={formData.phone}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                          placeholder="+1 (555) 000-0000"
+                          placeholder={t('phone_placeholder')}
                         />
                       ) : (
                         <p className="text-gray-900 flex items-center">
                           <span className="text-gray-400 mr-2">📞</span>
-                          {user?.personalInfo?.phoneNumber || formData.phone || 'Not provided'}
+                          {user?.personalInfo?.phoneNumber || formData.phone || t('not_provided')}
                         </p>
                       )}
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('location')}</label>
                       <p className="text-gray-900 flex items-center">
                         <span className="text-gray-400 mr-2">📍</span>
-                        {user?.personalInfo?.city ? `${user.personalInfo.city}, ${user.personalInfo.postcode}` : 'Not provided'}
+                        {user?.personalInfo?.city ? `${user.personalInfo.city}, ${user.personalInfo.postcode}` : t('not_provided')}
                       </p>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Member Since</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('member_since')}</label>
                       <p className="text-gray-900 flex items-center">
                         <Calendar className="w-4 h-4 mr-2 text-gray-400" />
                         {new Date(user?.createdAt || Date.now()).toLocaleDateString()}
@@ -272,18 +274,18 @@ export default function Profile() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('bio')}</label>
                     {isEditing ? (
                       <textarea
                         rows={3}
                         value={formData.bio}
                         onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent resize-none"
-                        placeholder="Tell us about yourself..."
+                        placeholder={t('bio_placeholder')}
                       />
                     ) : (
                       <p className="text-gray-900">
-                        {formData.bio || 'No bio provided yet.'}
+                        {formData.bio || t('no_bio')}
                       </p>
                     )}
                   </div>
@@ -294,29 +296,29 @@ export default function Profile() {
               <div className="bg-white rounded-2xl shadow-sm p-6">
                 <h2 className="text-xl font-bold text-gray-900 flex items-center mb-6">
                   <Shield className="w-5 h-5 mr-2 text-teal-600" />
-                  Security
+                  {t('security')}
                 </h2>
 
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                   <div className="flex items-center">
                     <Lock className="w-5 h-5 text-gray-400 mr-3" />
                     <div>
-                      <p className="font-medium text-gray-900">Password</p>
-                      <p className="text-sm text-gray-500">Change your account password</p>
+                      <p className="font-medium text-gray-900">{t('password')}</p>
+                      <p className="text-sm text-gray-500">{t('change_password_desc')}</p>
                     </div>
                   </div>
                   <button
                     onClick={() => setShowPasswordModal(true)}
                     className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
                   >
-                    Change
+                    {t('change')}
                   </button>
                 </div>
               </div>
 
               {/* Quick Links */}
               <div className="bg-white rounded-2xl shadow-sm p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-6">Quick Links</h2>
+                <h2 className="text-xl font-bold text-gray-900 mb-6">{t('quick_links')}</h2>
                 
                 <div className="space-y-3">
                   <button
@@ -325,7 +327,7 @@ export default function Profile() {
                   >
                     <div className="flex items-center">
                       <BarChart3 className="w-5 h-5 text-teal-600 mr-3" />
-                      <span className="font-medium text-gray-900">View Dashboard</span>
+                      <span className="font-medium text-gray-900">{t('view_dashboard')}</span>
                     </div>
                     <ChevronRight className="w-5 h-5 text-gray-400" />
                   </button>
@@ -336,7 +338,7 @@ export default function Profile() {
                   >
                     <div className="flex items-center">
                       <BookOpen className="w-5 h-5 text-blue-600 mr-3" />
-                      <span className="font-medium text-gray-900">My Assessments</span>
+                      <span className="font-medium text-gray-900">{t('my_assessments')}</span>
                     </div>
                     <ChevronRight className="w-5 h-5 text-gray-400" />
                   </button>
@@ -348,23 +350,23 @@ export default function Profile() {
             <div className="space-y-6">
               {/* Stats Card */}
               <div className="bg-gradient-to-br from-teal-600 to-blue-700 rounded-2xl p-6 text-white">
-                <h3 className="font-bold text-lg mb-4">Your Progress</h3>
+                <h3 className="font-bold text-lg mb-4">{t('your_progress')}</h3>
                 
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-white/80">Scales Completed</span>
+                    <span className="text-white/80">{t('scales_completed')}</span>
                     <span className="font-bold text-2xl">{userStats?.scalesCompleted || 0}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-white/80">Modules Done</span>
+                    <span className="text-white/80">{t('modules_done')}</span>
                     <span className="font-bold text-2xl">{userStats?.modulesCompleted || 0}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-white/80">Avg Score</span>
+                    <span className="text-white/80">{t('avg_score')}</span>
                     <span className="font-bold text-2xl">{userStats?.averageScore.toFixed(1) || '0.0'}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-white/80">Time Spent</span>
+                    <span className="text-white/80">{t('time_spent')}</span>
                     <span className="font-bold text-2xl">{Math.round(userStats?.totalTimeSpent || 0)}m</span>
                   </div>
                 </div>
@@ -376,7 +378,7 @@ export default function Profile() {
                 className="w-full flex items-center justify-center p-4 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors font-semibold"
               >
                 <LogOut className="w-5 h-5 mr-2" />
-                Sign Out
+                {t('sign_out')}
               </button>
             </div>
           </div>
@@ -388,7 +390,7 @@ export default function Profile() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl p-6 w-full max-w-md">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-gray-900">Change Password</h3>
+              <h3 className="text-xl font-bold text-gray-900">{t('change')} {t('password')}</h3>
               <button 
                 onClick={() => setShowPasswordModal(false)} 
                 title="Close password modal"
@@ -399,7 +401,7 @@ export default function Profile() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('current_password')}</label>
                 <input
                   type="password"
                   value={passwordData.currentPassword}
@@ -409,7 +411,7 @@ export default function Profile() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('new_password')}</label>
                 <input
                   type="password"
                   value={passwordData.newPassword}
@@ -419,7 +421,7 @@ export default function Profile() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('confirm_new_password')}</label>
                 <input
                   type="password"
                   value={passwordData.confirmPassword}
@@ -433,14 +435,14 @@ export default function Profile() {
                   onClick={() => setShowPasswordModal(false)}
                   className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
                 >
-                  Cancel
+                  {t('cancel')}
                 </button>
                 <button
                   onClick={handleChangePassword}
                   disabled={loading}
                   className="flex-1 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-50"
                 >
-                  {loading ? 'Changing...' : 'Change Password'}
+                  {loading ? t('changing') : t('change') + ' ' + t('password')}
                 </button>
               </div>
             </div>

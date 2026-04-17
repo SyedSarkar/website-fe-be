@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { useScaleCompletion } from '../hooks/useScaleCompletion'
+import { useLanguage } from '../hooks/useLanguage'
 import api from '../lib/api'
 import type { Module } from '../types'
 import { 
@@ -64,6 +65,7 @@ interface UserDashboardProps {
 export default function UserDashboard({ modules }: UserDashboardProps) {
   const { user, logout } = useAuth()
   const { allScalesCompleted, loading: scalesLoading, refresh } = useScaleCompletion()
+  const { t } = useLanguage()
   const navigate = useNavigate()
   const [scaleResponses, setScaleResponses] = useState<ScaleResponse[]>([])
   const [moduleProgress, setModuleProgress] = useState<ModuleProgress[]>([])
@@ -201,21 +203,21 @@ export default function UserDashboard({ modules }: UserDashboardProps) {
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-bold text-gray-800">User Dashboard</h1>
-              <p className="text-sm text-gray-600">Welcome back, {user?.name}!</p>
+              <h1 className="text-2xl font-bold text-gray-800">{t('user_dashboard')}</h1>
+              <p className="text-sm text-gray-600">{t('welcome_back')}, {user?.name}!</p>
             </div>
             <div className="flex items-center gap-4">
               <button
                 onClick={logout}
                 className="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700"
               >
-                Sign Out
+                {t('sign_out')}
               </button>
               <Link
                 to="/"
                 className="px-4 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
               >
-                Back to Home
+                {t('back_to_home')}
               </Link>
             </div>
           </div>
@@ -234,7 +236,7 @@ export default function UserDashboard({ modules }: UserDashboardProps) {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              Overview
+              {t('overview')}
             </button>
             <button
               onClick={() => setActiveTab('scales')}
@@ -244,7 +246,7 @@ export default function UserDashboard({ modules }: UserDashboardProps) {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              My Scales
+              {t('my_scales')}
             </button>
             <button
               onClick={() => setActiveTab('modules')}
@@ -254,7 +256,7 @@ export default function UserDashboard({ modules }: UserDashboardProps) {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              Module Progress
+              {t('module_progress')}
             </button>
           </nav>
         </div>
@@ -273,7 +275,7 @@ export default function UserDashboard({ modules }: UserDashboardProps) {
                     <BarChart3 className="w-6 h-6 text-blue-600" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Scales Completed</p>
+                    <p className="text-sm font-medium text-gray-600">{t('scales_completed')}</p>
                     <p className="text-2xl font-semibold text-gray-900">{userStats.totalScalesCompleted}</p>
                   </div>
                 </div>
@@ -285,7 +287,7 @@ export default function UserDashboard({ modules }: UserDashboardProps) {
                     <BookOpen className="w-6 h-6 text-green-600" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Modules Completed</p>
+                    <p className="text-sm font-medium text-gray-600">{t('modules_completed')}</p>
                     <p className="text-2xl font-semibold text-gray-900">{userStats.totalModulesCompleted}</p>
                   </div>
                 </div>
@@ -297,7 +299,7 @@ export default function UserDashboard({ modules }: UserDashboardProps) {
                     <TrendingUp className="w-6 h-6 text-purple-600" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Average Score</p>
+                    <p className="text-sm font-medium text-gray-600">{t('average_score')}</p>
                     <p className="text-2xl font-semibold text-gray-900">{userStats.averageScore.toFixed(1)}</p>
                   </div>
                 </div>
@@ -309,7 +311,7 @@ export default function UserDashboard({ modules }: UserDashboardProps) {
                     <Clock className="w-6 h-6 text-yellow-600" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Time Spent</p>
+                    <p className="text-sm font-medium text-gray-600">{t('time_spent')}</p>
                     <p className="text-2xl font-semibold text-gray-900">{Math.round(userStats.totalTimeSpent)}m</p>
                   </div>
                 </div>
@@ -321,7 +323,7 @@ export default function UserDashboard({ modules }: UserDashboardProps) {
               {/* Recent Scale Results */}
               <div className="bg-white rounded-lg shadow">
                 <div className="px-6 py-4 border-b border-gray-200">
-                  <h3 className="text-lg font-medium text-gray-900">Recent Scale Results</h3>
+                  <h3 className="text-lg font-medium text-gray-900">{t('recent_scale_results')}</h3>
                 </div>
                 <div className="p-6">
                   <div className="space-y-4">
@@ -337,12 +339,12 @@ export default function UserDashboard({ modules }: UserDashboardProps) {
                           <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getRiskLevelColor(scale.riskLevel || 'Unknown')}`}>
                             {scale.riskLevel || 'Unknown'}
                           </span>
-                          <p className="text-sm text-gray-600 mt-1">Score: {scale.totalScore}</p>
+                          <p className="text-sm text-gray-600 mt-1">{t('score')}: {scale.totalScore}</p>
                         </div>
                       </div>
                     ))}
                     {scaleResponses.length === 0 && (
-                      <p className="text-gray-500 text-center py-4">No scales completed yet</p>
+                      <p className="text-gray-500 text-center py-4">{t('no_scales_completed')}</p>
                     )}
                   </div>
                 </div>
@@ -351,7 +353,7 @@ export default function UserDashboard({ modules }: UserDashboardProps) {
               {/* Module Progress */}
               <div className="bg-white rounded-lg shadow">
                 <div className="px-6 py-4 border-b border-gray-200">
-                  <h3 className="text-lg font-medium text-gray-900">Module Progress</h3>
+                  <h3 className="text-lg font-medium text-gray-900">{t('module_progress')}</h3>
                 </div>
                 <div className="p-6">
                   <div className="space-y-4">
@@ -360,7 +362,7 @@ export default function UserDashboard({ modules }: UserDashboardProps) {
                         <div className="flex justify-between items-center">
                           <span className="text-sm font-medium text-gray-900">{module.moduleName}</span>
                           <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getModuleStatusColor(module.status)}`}>
-                            {module.status.replace('_', ' ')}
+                            {t(module.status === 'completed' ? 'completed' : module.status === 'in_progress' ? 'in_progress' : 'enrolled')}
                           </span>
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-2">
@@ -369,11 +371,11 @@ export default function UserDashboard({ modules }: UserDashboardProps) {
                             style={{ width: `${module.actualPercentage || 0}%` }}
                           ></div>
                         </div>
-                        <p className="text-xs text-gray-500">{module.actualPercentage || 0}% complete</p>
+                        <p className="text-xs text-gray-500">{module.actualPercentage || 0}% {t('complete_percent')}</p>
                       </div>
                     ))}
                     {moduleProgress.length === 0 && (
-                      <p className="text-gray-500 text-center py-4">No modules enrolled yet</p>
+                      <p className="text-gray-500 text-center py-4">{t('no_modules_enrolled')}</p>
                     )}
                   </div>
                 </div>
@@ -383,7 +385,7 @@ export default function UserDashboard({ modules }: UserDashboardProps) {
             {/* Quick Actions */}
             <div className="bg-white rounded-lg shadow">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h3 className="text-lg font-medium text-gray-900">Quick Actions</h3>
+                <h3 className="text-lg font-medium text-gray-900">{t('quick_actions')}</h3>
               </div>
               <div className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -393,8 +395,8 @@ export default function UserDashboard({ modules }: UserDashboardProps) {
                   >
                     <Target className="w-8 h-8 text-teal-600 mr-3" />
                     <div>
-                      <p className="font-medium text-gray-900">Review Scales</p>
-                      <p className="text-sm text-gray-500">View assessments</p>
+                      <p className="font-medium text-gray-900">{t('review_scales')}</p>
+                      <p className="text-sm text-gray-500">{t('view_assessments')}</p>
                     </div>
                   </button>
                   
@@ -404,8 +406,8 @@ export default function UserDashboard({ modules }: UserDashboardProps) {
                   >
                     <BookOpen className="w-8 h-8 text-blue-600 mr-3" />
                     <div>
-                      <p className="font-medium text-gray-900">Continue Learning</p>
-                      <p className="text-sm text-gray-500">Access modules</p>
+                      <p className="font-medium text-gray-900">{t('continue_learning')}</p>
+                      <p className="text-sm text-gray-500">{t('access_modules')}</p>
                     </div>
                   </Link>
                   
@@ -415,8 +417,8 @@ export default function UserDashboard({ modules }: UserDashboardProps) {
                   >
                     <User className="w-8 h-8 text-purple-600 mr-3" />
                     <div>
-                      <p className="font-medium text-gray-900">View Profile</p>
-                      <p className="text-sm text-gray-500">Manage account</p>
+                      <p className="font-medium text-gray-900">{t('view_profile')}</p>
+                      <p className="text-sm text-gray-500">{t('manage_account')}</p>
                     </div>
                   </Link>
                 </div>
@@ -430,29 +432,29 @@ export default function UserDashboard({ modules }: UserDashboardProps) {
           <div className="space-y-6">
             <div className="bg-white rounded-lg shadow">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h3 className="text-lg font-medium text-gray-900">My Scale Responses</h3>
+                <h3 className="text-lg font-medium text-gray-900">{t('my_scale_responses')}</h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Scale Name
+                        {t('scale_name')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Score
+                        {t('score')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Risk Level
+                        {t('risk_level')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Completed
+                        {t('completed_date')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Time Taken
+                        {t('time_taken')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Actions
+                        {t('actions')}
                       </th>
                     </tr>
                   </thead>
@@ -482,7 +484,7 @@ export default function UserDashboard({ modules }: UserDashboardProps) {
                             className="inline-flex items-center px-3 py-1 bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors"
                           >
                             <RefreshCw className="w-4 h-4 mr-1" />
-                            Redo
+                            {t('redo')}
                           </button>
                         </td>
                       </tr>
@@ -490,7 +492,7 @@ export default function UserDashboard({ modules }: UserDashboardProps) {
                     {scaleResponses.length === 0 && (
                       <tr>
                         <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                          No scale responses found. Take your first assessment to get started!
+                          {t('no_scale_responses')}
                         </td>
                       </tr>
                     )}
@@ -506,29 +508,29 @@ export default function UserDashboard({ modules }: UserDashboardProps) {
           <div className="space-y-6">
             <div className="bg-white rounded-lg shadow">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h3 className="text-lg font-medium text-gray-900">My Module Progress</h3>
+                <h3 className="text-lg font-medium text-gray-900">{t('my_module_progress')}</h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Module Name
+                        {t('module_name')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Progress
+                        {t('progress_col')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
+                        {t('status_col')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Time Spent
+                        {t('time_spent')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Last Accessed
+                        {t('last_accessed')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Action
+                        {t('action')}
                       </th>
                     </tr>
                   </thead>
@@ -556,7 +558,7 @@ export default function UserDashboard({ modules }: UserDashboardProps) {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getModuleStatusColor(module.actualPercentage === 100 ? 'completed' : module.status)}`}>
-                            {module.actualPercentage === 100 ? 'completed' : module.status.replace('_', ' ')}
+                            {module.actualPercentage === 100 ? t('completed') : t(module.status === 'in_progress' ? 'in_progress' : 'enrolled')}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -570,7 +572,7 @@ export default function UserDashboard({ modules }: UserDashboardProps) {
                             to={`/module/${module.moduleSlug}/${module.currentPageSlug || '00-home'}`}
                             className="px-3 py-1 bg-teal-600 text-white rounded hover:bg-teal-700 transition-colors"
                           >
-                            {module.actualPercentage === 100 ? 'Review' : 'Continue'}
+                            {module.actualPercentage === 100 ? t('review') : t('continue_btn')}
                           </Link>
                         </td>
                       </tr>
@@ -578,7 +580,7 @@ export default function UserDashboard({ modules }: UserDashboardProps) {
                     {moduleProgress.length === 0 && (
                       <tr>
                         <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                          No module enrollments found. Visit any module page to start learning!
+                          {t('no_module_enrollments')}
                         </td>
                       </tr>
                     )}

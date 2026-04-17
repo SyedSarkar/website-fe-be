@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
+import { useLanguage } from '../../hooks/useLanguage'
 
 export default function RegisterPage() {
+  const { t } = useLanguage()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -26,12 +28,12 @@ export default function RegisterPage() {
     setError('')
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match')
+      setError(t('passwords_not_match_auth'))
       return
     }
 
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long')
+      setError(t('password_min_chars'))
       return
     }
 
@@ -41,7 +43,7 @@ export default function RegisterPage() {
       await register(formData.name, formData.email, formData.password)
       navigate('/')
     } catch (err: any) {
-      setError(err.message || 'Registration failed. Please try again.')
+      setError(err.message || t('registration_failed'))
     } finally {
       setLoading(false)
     }
@@ -57,12 +59,12 @@ export default function RegisterPage() {
             </svg>
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
+            {t('create_your_account')}
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Or{' '}
+            {' '}
             <Link to="/login" className="font-medium text-teal-600 hover:text-teal-500">
-              sign in to your existing account
+              {t('sign_in_existing')}
             </Link>
           </p>
         </div>
@@ -77,7 +79,7 @@ export default function RegisterPage() {
           <div className="space-y-4">
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                Full Name
+                {t('full_name')}
               </label>
               <input
                 id="name"
@@ -87,13 +89,13 @@ export default function RegisterPage() {
                 value={formData.name}
                 onChange={handleChange}
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500 focus:z-10 sm:text-sm"
-                placeholder="Enter your full name"
+                placeholder={t('enter_full_name')}
               />
             </div>
             
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email address
+                {t('email')}
               </label>
               <input
                 id="email"
@@ -104,13 +106,13 @@ export default function RegisterPage() {
                 value={formData.email}
                 onChange={handleChange}
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500 focus:z-10 sm:text-sm"
-                placeholder="Enter your email"
+                placeholder={t('enter_email')}
               />
             </div>
             
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
+                {t('password')}
               </label>
               <input
                 id="password"
@@ -120,13 +122,13 @@ export default function RegisterPage() {
                 value={formData.password}
                 onChange={handleChange}
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500 focus:z-10 sm:text-sm"
-                placeholder="Create a password (min 6 characters)"
+                placeholder={t('password_min_chars')}
               />
             </div>
             
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                Confirm Password
+                {t('confirm_password')}
               </label>
               <input
                 id="confirmPassword"
@@ -136,7 +138,7 @@ export default function RegisterPage() {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500 focus:z-10 sm:text-sm"
-                placeholder="Confirm your password"
+                placeholder={t('enter_password')}
               />
             </div>
           </div>
@@ -147,7 +149,7 @@ export default function RegisterPage() {
               disabled={loading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Creating account...' : 'Create account'}
+              {loading ? t('creating_account') : t('create_account_btn')}
             </button>
           </div>
         </form>
